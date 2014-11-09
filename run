@@ -1,4 +1,4 @@
 #!/bin/sh
 
 cd ./bin
-./leaSh
+./leaSh $1
