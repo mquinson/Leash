@@ -13,6 +13,7 @@
 
 int checkWritingFolder(char* path);
 int untar(char* tarPath, char* untarPath);
+int tarSize(char* path);
 
 
 #endif

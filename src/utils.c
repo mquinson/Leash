@@ -31,3 +31,10 @@ int untar(char* path, char* untarPath){
 	}
 	return 0;
 }
+
+
+int tarSize(char* path){
+	//TODO
+	//tar tzvf archive.tar.gz | sed 's/ \+/ /g' | cut -f3 -d' ' | sed '2,$s/^/+ /' | paste -sd' ' | bc
+	return 0;
+}
