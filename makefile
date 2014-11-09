@@ -20,14 +20,16 @@ PROG = leaSh
 #definition de la cible a reconstruire
 all : directories $(DEST)$(PROG)
 
-$(DEST)$(PROG) : $(DEST)main.o
-	$(CC) $(DEST)main.o  -o $(DEST)$(PROG)
+$(DEST)$(PROG) : $(DEST)main.o $(DEST)utils.o
+	$(CC) $(DEST)main.o $(DEST)utils.o -o $(DEST)$(PROG)
 
 #compilation main
 $(DEST)main.o : $(SRC)main.c 
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)main.c -o $(DEST)main.o
 
 
+$(DEST)utils.o : $(SRC)utils.c 
+	$(CC) $(CFLAGS) $(LIB) -c $(SRC)utils.c -o $(DEST)utils.o
 
 #########################################################################
 
