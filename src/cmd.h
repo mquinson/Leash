@@ -1,6 +1,11 @@
-// Structure représentant une commande //
 #ifndef CMD_H
 #define CMD_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+
 
 typedef struct{
  pid_t pid;
