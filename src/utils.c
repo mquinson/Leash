@@ -76,3 +76,12 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 		
 	}
 }
+
+void readWriteFD (int fdin,int fdout) {
+
+
+
+
+
+
+}
