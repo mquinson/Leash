@@ -8,4 +8,6 @@ typedef struct{
  int backquoted;
  int fd_in;
  int fd_out;
-}
+}cmd;
+
+
