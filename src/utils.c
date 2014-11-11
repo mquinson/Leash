@@ -33,10 +33,10 @@ int tarSize(char* path){
 
 int execSimple(char* cmd, char* args[], int* fd, int flags){
 	/* flags : 
-	0 -> nothing
-	1 -> branch pipe with stdio, stdout 
-	2 -> wait son
-	3 -> 1+2*/
+	   0 -> nothing
+	   1 -> branch pipe with stdio, stdout 
+	   2 -> wait son
+	   3 -> 1+2*/
 	if(flags & EXEC_PIPE_SON){
 		pipe(fd);	
 	}
@@ -48,7 +48,7 @@ int execSimple(char* cmd, char* args[], int* fd, int flags){
 	int fd2[2][2];
 	pipe(fd2[0]);
 	pipe(fd2[1]);
-	
+
 
 	if(!pid){
 		if(flags & EXEC_PIPE_SON){
@@ -62,7 +62,7 @@ int execSimple(char* cmd, char* args[], int* fd, int flags){
 			close(1);
 			close(2);
 		}
-		
+
 		execvp(cmd,args);
 		return 1;
 	}else{
@@ -81,9 +81,17 @@ int execSimple(char* cmd, char* args[], int* fd, int flags){
 
 void readWriteFD (int fdin,int fdout) {
 
+	char message[1024];
 
+	if((read(fdin,message,sizeof message))==-1){
+		printf("probleme read |%s|\n",message);
+	}
+	printf("message a envoyer:|%s|\n",message);
 
-
+	if((write(fdout,message,sizeof message))==-1){
+		printf("probleme write |%s|\n",message);
+	}
+	printf("message ecrit :|%s|\n",message);
 
 
 }
