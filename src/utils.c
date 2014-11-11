@@ -78,19 +78,20 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 	}
 }
 
-void readWriteFD (int fdin,int fdout) {
+int readWriteFD (int fdin,int fdout,int taille) {
 
-	char message[1024];
-
+	char message[taille];
+	memset(message,0,taille);
+	
 	if((read(fdin,message,sizeof message))==-1){
 		printf("probleme read |%s|\n",message);
 	}
+	
 	printf("message a envoyer:|%s|\n",message);
 
 	if((write(fdout,message,sizeof message))==-1){
 		printf("probleme write |%s|\n",message);
 	}
 	printf("message ecrit :|%s|\n",message);
-
-
+	return taille;
 }
