@@ -18,6 +18,6 @@ int checkWritingFolder(char* path);
 int untar(char* tarPath, char* untarPath);
 int tarSize(char* path);
 int execSimple(char* cmd, char* args[], int* fd, int flags);
-
+void readWriteFD (int fdin,int fdout);
 
 #endif
