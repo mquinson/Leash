@@ -1,0 +1,40 @@
+* Taches hors-sujet
+** TODO brancher des pipes ensemble
+** TODO implementer un netoyage de dossier d'extraction
+** TODO tester execSimple dans les differents cas
+** TODO verifier existance/ecriture dossier/fichier
+*** TODO ameliorer cette fonction
+** TODO mettre des constantes sur le retour des erreurs
+
+* Taches prioritaires
+** TODO decompression archive
+*** TODO securiser ce truc
+** TODO message d accueil
+** TODO recapitulatif cmd utilisables
+** TODO affichage attente utilisateur
+** TODO valider commande 
+** TODO parser commande 
+** TODO stockage commande
+** TODO fonction magique
+** TODO executer commande 
+** TODO afficher resultat
+** TODO verifier resultat
+* Taches optionnelles
+** TODO crypter meta
+** TODO implementer cd
+** TODO ctrl+D pour quitter
+** TODO implementer exit
+** TODO Ctrl+c interompre les fils mais pas le programme
+** TODO implementer < et >
+** TODO implementer |
+** TODO gerer historique
+** TODO implementer && et || 
+** TODO gerer les guillemets
+** TODO securiser les commandes (cd, ecriture, lecture, decompression,...)
+** TODO globbing
+** TODO backquotes
+** TODO faire des niveaux
+** TODO autocompletion
+** TODO ncurses
+
+** TODO notoyer le code
