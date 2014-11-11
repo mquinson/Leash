@@ -1,3 +1,7 @@
+#######################
+##     VARIABLES     ##
+#######################
+
 #definition du compilateur
 CC = gcc
 
@@ -16,18 +20,59 @@ LIB =
 
 #nom de l executable
 PROG = leaSh
+TEST = leaShTest
+
+#liste des programmes AJOUT ici
+LISTE = $(DEST)utils.o
+
+
+#######################
+##      REGLES       ##
+#######################
+
 
 #definition de la cible a reconstruire
-all : directories $(DEST)$(PROG)
+all : $(DEST)$(PROG)
 
-$(DEST)$(PROG) : $(DEST)main.o $(DEST)utils.o
-	$(CC) $(DEST)main.o $(DEST)utils.o -o $(DEST)$(PROG)
+#definition de la cible test a reconstruire
+test : $(DEST)$(TEST)
+
+#programme principal
+$(DEST)$(PROG) : $(LISTE) $(DEST)main.o
+	@rm -f $(DEST)$(TEST)
+	@rm -f $(DEST)test.o 2>/dev/null
+	$(CC) $(DEST)main.o $(LISTE) -o $(DEST)$(PROG)
+
+#programme tests
+$(DEST)$(TEST) : $(LISTE) $(DEST)test.o	
+	@rm -f $(DEST)$(PROG)
+	@rm -f $(DEST)main.o 2>/dev/null
+	$(CC) $(DEST)test.o $(LISTE) -o $(DEST)$(TEST)
+
+#compilation des fichiers (hors main et test)
+allfiles : $(LISTE)
+
+
+#######################
+##    EXECUTABLES    ##
+#######################
 
 #compilation main
 $(DEST)main.o : $(SRC)main.c 
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)main.c -o $(DEST)main.o
 
+#compilation test
+$(DEST)test.o : $(SRC)test.c
+	$(CC) $(CFLAGS) $(LIB) -c $(SRC)test.c -o $(DEST)test.o
 
+#######################
+##  NON EXECUTABLES  ##
+#######################
+## AJOUTER REGLES LA ##
+#######################
+
+
+#compilation utils
 $(DEST)utils.o : $(SRC)utils.c 
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)utils.c -o $(DEST)utils.o
 
@@ -57,3 +102,4 @@ clean :
 #suppression de tout ce qui peut etre regenere
 mrproper : clean
 	@rm -f $(DEST)$(PROG)
+	@rm -f $(DEST)$(TEST)
