@@ -8,12 +8,17 @@
 #include <dirent.h>
 #include <sys/wait.h>
 
+#define EXEC_NO_FLAG	0
+#define EXEC_PIPE_SON 	1
+#define EXEC_WAIT_SON	2
+#define EXEC_SILENCE	4
 
 
 
 int checkWritingFolder(char* path);
 int untar(char* tarPath, char* untarPath);
 int tarSize(char* path);
+int execSimple(char* cmd, char* args[], int* fd, int flags);
 
 
 #endif
