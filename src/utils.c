@@ -11,7 +11,7 @@ int checkWritingFolder(char* path){
 int untar(char* path, char* untarPath){
 	if(checkWritingFolder(untarPath)){
 		char* tabargs[6] = {"tar","-zxvf",path,"-C",untarPath,NULL};
-		int err = execSimple("tar",tabargs,NULL,EXEC_WAIT_SON|EXEC_SILENCE);
+		int err = execSimple("tar",tabargs,NULL,EXEC_WAIT_SON);
 		if(err){
 			printf("Error untar : %d",err);
 			return 1;
@@ -57,11 +57,12 @@ int execSimple(char* cmd, char* args[], int* fd, int flags){
 
 			dup2(fd2[1][0],0);
 			close(fd2[1][1]);
-		}
-		if(flags & EXEC_SILENCE){
+		}else{
+			close(0);
 			close(1);
 			close(2);
 		}
+		
 		execvp(cmd,args);
 		return 1;
 	}else{
