@@ -6,6 +6,12 @@
 *** TODO ameliorer cette fonction
 ** TODO mettre des constantes sur le retour des erreurs
 
+* fichier src
+** TODO constructeur, destructeur
+** TODO fonction execute
+** TODO cherche sur le branchement de differentes commandes
+*** une fonction pseudo recursive permettant suivant le lien (|,&,||,...) de lier les cmds
+
 * Taches prioritaires
 ** TODO decompression archive
 *** TODO securiser ce truc
