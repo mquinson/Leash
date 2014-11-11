@@ -17,13 +17,9 @@ int main(int argc, char *argv[]){
 	strcpy(buffer_out,"TEST A ENVOYER\n");
 
 	int pipefd[2];
-	if(pipe(pipefd)==0){
-		printf("succes pipe -%d-%d\n",pipefd[0],pipefd[1]);	
-	}
+	pipe(pipefd);
         
-	printf("%s-%d-%d\n",buffer_out,pipefd[0],sizeof buffer_out);
-        if((send=write(pipefd[1],buffer_out,sizeof buffer_out))==-1){
-		printf("%d\n",send);
+	if((send=write(pipefd[1],buffer_out,sizeof buffer_out))==-1){
 		printf("test>Probleme ecriture buffer_out\n");
 	}
 
