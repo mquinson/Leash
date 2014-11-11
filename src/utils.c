@@ -11,7 +11,7 @@ int checkWritingFolder(char* path){
 int untar(char* path, char* untarPath){
 	if(checkWritingFolder(untarPath)){
 		char* tabargs[6] = {"tar","-zxvf",path,"-C",untarPath,NULL};
-		int err = execSimple("tar",tabargs,NULL,EXEC_WAIT_SON);
+		int err = execSimple("tar",tabargs,NULL,NULL,EXEC_WAIT_SON);
 		if(err){
 			printf("Error untar : %d",err);
 			return 1;
@@ -31,32 +31,29 @@ int tarSize(char* path){
 }
 
 
-int execSimple(char* cmd, char* args[], int* fd, int flags){
+int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 	/* flags : 
-	   0 -> nothing
-	   1 -> branch pipe with stdio, stdout 
-	   2 -> wait son
-	   3 -> 1+2*/
-	if(flags & EXEC_PIPE_SON){
-		pipe(fd);	
-	}
+	0 -> nothing
+	1 -> branch pipe with stdio, stdout 
+	2 -> wait son
+	3 -> 1+2*/
+
+	
 	int pid=fork();
 	if(pid==-1){
 		perror("Error fork execSimple");
-		return 1;
+		return -1;
 	}
-	int fd2[2][2];
-	pipe(fd2[0]);
-	pipe(fd2[1]);
-
 
 	if(!pid){
 		if(flags & EXEC_PIPE_SON){
-			dup2(fd2[0][1],1);
-			close(fd2[0][0]);
-
-			dup2(fd2[1][0],0);
-			close(fd2[1][1]);
+			if(in){
+				dup2(in[0],0);
+				close(in[1]);
+			}
+			if(out){
+				dup2(out[1],1);
+			}
 		}else{
 			close(0);
 			close(1);
@@ -64,18 +61,20 @@ int execSimple(char* cmd, char* args[], int* fd, int flags){
 		}
 
 		execvp(cmd,args);
-		return 1;
+		return -1;
 	}else{
-		if(flags & EXEC_PIPE_SON){
-			dup2(fd2[0][0],fd[0]);
-			dup2(fd2[1][1],fd[1]);
-			close(fd2[0][1]);
-			close(fd2[1][0]);
-		}
 		if(flags & EXEC_WAIT_SON){
 			waitpid(pid,NULL,0);
+			
+			if(in){
+				close(in[0]);
+			}
+			if(out){
+				close(out[1]);
+			}
 		}
 		return 0;
+		
 	}
 }
 
