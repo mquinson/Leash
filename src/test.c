@@ -22,14 +22,14 @@ int main(int argc, char *argv[]){
 	}
         
 	printf("%s-%d-%d\n",buffer_out,pipefd[0],sizeof buffer_out);
-        if((send=write(pipefd[0],buffer_out,sizeof buffer_out))==-1){
+        if((send=write(pipefd[1],buffer_out,sizeof buffer_out))==-1){
 		printf("%d\n",send);
 		printf("test>Probleme ecriture buffer_out\n");
 	}
 
         readWriteFD(pipefd[0],pipefd[1]);
 
-        if((read(pipefd[1],&buffer_in,sizeof buffer_in))==-1){
+        if((read(pipefd[0],&buffer_in,sizeof buffer_in))==-1){
 		printf("test>Problème lecture buffer_in\n");
 	}
 
