@@ -1,5 +1,6 @@
 // Structure représentant une commande //
-
+#ifndef CMD_H
+#define CMD_H
 
 typedef struct{
  pid_t pid;
@@ -8,6 +9,9 @@ typedef struct{
  int backquoted;
  int fd_in;
  int fd_out;
-}cmd;
+}Cmd;
 
+Cmd* cmd_init(pid_t pid, char* nom, char* args, int backquoted, int fd_in, int fd_out);
+void cmd_dest(Cmd* cmd);
 
+#endif
