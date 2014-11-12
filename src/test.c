@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include "utils.h"
 
@@ -44,13 +45,16 @@ void test_fonction_ecriture_lecture_readWriteFD(){
 }
 
 int main(int argc, char *argv[]){
-	/*
-	int err=untar(argv[1],argv[2]);
+	
+	int err=untar("zada/dza/azdazd/dazgreger/gregre/ger/lol.tar.gz");
 	printf("err : %d\n", err);
+	/*
 	test_fonction_ecriture_lecture_readWriteFD();
 	printf("TEST2\n");
-	*/
+	
 	test_2_read_writeFD();
 	test_3_read_writeFD();
-	return 0;
+	*/
+	printf("%s\n",get_current_dir_name());	
+        return 0;
 }
