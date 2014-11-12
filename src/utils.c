@@ -33,12 +33,12 @@ int tarSize(char* path){
 
 int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 	/* flags : 
-	0 -> nothing
-	1 -> branch pipe with stdio, stdout 
-	2 -> wait son
-	3 -> 1+2*/
+	   0 -> nothing
+	   1 -> branch pipe with stdio, stdout 
+	   2 -> wait son
+	   3 -> 1+2*/
 
-	
+
 	int pid=fork();
 	if(pid==-1){
 		perror("Error fork execSimple");
@@ -65,7 +65,7 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 	}else{
 		if(flags & EXEC_WAIT_SON){
 			waitpid(pid,NULL,0);
-			
+
 			if(in){
 				close(in[0]);
 			}
@@ -74,24 +74,20 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 			}
 		}
 		return 0;
-		
+
 	}
 }
 
-int readWriteFD (int fdin,int fdout,int taille) {
+void readWriteFD (int fdin,int fdout) {
 
-	char message[taille];
-	memset(message,0,taille);
-	
-	if((read(fdin,message,sizeof message))==-1){
-		printf("probleme read |%s|\n",message);
-	}
-	
-	printf("message a envoyer:|%s|\n",message);
+	char message[8];
+	memset(message,0,8);
+	int r;	
 
-	if((write(fdout,message,sizeof message))==-1){
-		printf("probleme write |%s|\n",message);
+	while((r=read(fdin,message,8))>0){
+
+		write(fdout,message,r);
+
 	}
-	printf("message ecrit :|%s|\n",message);
-	return taille;
+
 }
