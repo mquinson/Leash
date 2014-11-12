@@ -5,11 +5,19 @@
 #include "utils.h"
 
 
+
+
+void test_3_read_writeFD(){
+
+	int fdfic = open("fichiers_test/petite_taille.txt",O_RDONLY);	
+	readWriteFD(fdfic,1);
+
+}
+
 void test_2_read_writeFD(){
 
 	int fdfic = open("fichiers_test/grande_taille.txt",O_RDONLY);	
 	readWriteFD(fdfic,1);
-
 }
 
 void test_fonction_ecriture_lecture_readWriteFD(){
@@ -41,6 +49,8 @@ int main(int argc, char *argv[]){
 	printf("err : %d\n", err);
 	test_fonction_ecriture_lecture_readWriteFD();
 	printf("TEST2\n");
-	*/test_2_read_writeFD();
+	*/
+	test_2_read_writeFD();
+	test_3_read_writeFD();
 	return 0;
 }

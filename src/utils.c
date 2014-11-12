@@ -81,7 +81,6 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 void readWriteFD (int fdin,int fdout) {
 
 	char message[8];
-	memset(message,0,8);
 	int r;	
 
 	while((r=read(fdin,message,8))>0){
