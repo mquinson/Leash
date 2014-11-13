@@ -29,14 +29,14 @@ void test_fonction_ecriture_lecture_readWriteFD(){
 
 	int pipefd[2];
 	pipe(pipefd);
-        
+	
 	if((send=write(pipefd[1],buffer_out,sizeof buffer_out))==-1){
 		printf("test>Probleme ecriture buffer_out\n");
 	}
 	readWriteFD(pipefd[0],1);
-        char buffer_in[1024];
-        memset(buffer_in,0,1024);
-        if((read(pipefd[0],&buffer_in,sizeof buffer_in))==-1){
+	char buffer_in[1024];
+	memset(buffer_in,0,1024);
+	if((read(pipefd[0],&buffer_in,sizeof buffer_in))==-1){
 		printf("test>Problème lecture buffer_in\n");
 	}
 
@@ -56,5 +56,5 @@ int main(int argc, char *argv[]){
 	test_3_read_writeFD();
 	*/
 	printf("%s\n",get_current_dir_name());	
-        return 0;
+	return 0;
 }

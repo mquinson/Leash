@@ -64,50 +64,50 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 	   3 -> 1+2*/
 
 
-	int pid=fork();
-	if(pid==-1){
-		perror("Error fork execSimple");
-		return -1;
+	   int pid=fork();
+	   if(pid==-1){
+	   	perror("Error fork execSimple");
+	   	return -1;
+	   }
+
+	   if(!pid){
+	   	if(flags & EXEC_PIPE_SON){
+	   		if(in){
+	   			dup2(in[0],0);
+	   			close(in[1]);
+	   		}
+	   		if(out){
+	   			dup2(out[1],1);
+	   		}
+	   	}else{
+	   		close(0);
+	   		close(1);
+	   		close(2);
+	   	}
+
+	   	execvp(cmd,args);
+	   	return -1;
+	   }else{
+	   	if(flags & EXEC_WAIT_SON){
+	   		waitpid(pid,NULL,0);
+
+	   		if(in){
+	   			close(in[0]);
+	   		}
+	   		if(out){
+	   			close(out[1]);
+	   		}
+	   	}
+	   	return 0;
+
+	   }
 	}
 
-	if(!pid){
-		if(flags & EXEC_PIPE_SON){
-			if(in){
-				dup2(in[0],0);
-				close(in[1]);
-			}
-			if(out){
-				dup2(out[1],1);
-			}
-		}else{
-			close(0);
-			close(1);
-			close(2);
+	void readWriteFD (int fdin,int fdout) {
+		char message[8];
+		int r;	
+
+		while((r=read(fdin,message,8))>0){
+			write(fdout,message,r);
 		}
-
-		execvp(cmd,args);
-		return -1;
-	}else{
-		if(flags & EXEC_WAIT_SON){
-			waitpid(pid,NULL,0);
-
-			if(in){
-				close(in[0]);
-			}
-			if(out){
-				close(out[1]);
-			}
-		}
-		return 0;
-
 	}
-}
-
-void readWriteFD (int fdin,int fdout) {
-	char message[8];
-	int r;	
-
-	while((r=read(fdin,message,8))>0){
-		write(fdout,message,r);
-	}
-}
