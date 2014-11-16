@@ -5,12 +5,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
+
+#include "utils.h"
 
 typedef struct{
 	pid_t pid;
 	char* nom;
-	char* arguments;
+	int nbArgs;
+	char** arguments;
 	int result;
 	int backquoted;
 	int fd_in;
@@ -18,7 +24,8 @@ typedef struct{
 }Cmd;
 
 
-Cmd* cmd_init(pid_t pid, char* nom, char* args, int backquoted, int fd_in, int fd_out);
+Cmd* cmd_init(char str[]);
 void cmd_dest(Cmd* cmd);
-
+void cmd_exec(Cmd* cmd);
+void cmd_print(Cmd* cmd);
 #endif
