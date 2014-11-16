@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#include "cmd.h"
 #include "utils.h"
 
 
@@ -29,7 +31,7 @@ void test_fonction_ecriture_lecture_readWriteFD(){
 
 	int pipefd[2];
 	pipe(pipefd);
-	
+
 	if((send=write(pipefd[1],buffer_out,sizeof buffer_out))==-1){
 		printf("test>Probleme ecriture buffer_out\n");
 	}
@@ -44,10 +46,79 @@ void test_fonction_ecriture_lecture_readWriteFD(){
 
 }
 
-int main(int argc, char *argv[]){
+void createCmd(){
 	
+	
+    char reponse[]="      2      18     129";
+
+	char str1[]="ls -la";
+	char str2[]="grep f";
+	char str3[]="wc" ;
+
+
+	printf("-----------------------\n");
+	Cmd* cmd1 = cmd_init(str1);
+	int fd1[2];
+	pipe(fd1);
+
+
+	cmd1->fd_out=fd1[1];
+
+	cmd_exec(cmd1);
+
+	close(fd1[1]);
+	printf("-----------------------\n");
+
+	
+	int fd2[2];
+	pipe(fd2);
+
+	Cmd* cmd2=cmd_init(str2);
+	cmd2->fd_in=fd1[0];
+	cmd2->fd_out=fd2[1];
+
+	cmd_exec(cmd2);
+	close(fd2[1]);
+	printf("-----------------------\n");
+
+
+	int fd3[2];
+	pipe(fd3);
+
+	Cmd* cmd3=cmd_init(str3);
+	cmd3->fd_in=fd2[0];
+	cmd3->fd_out=fd3[1];
+
+	cmd_exec(cmd3);
+	close(fd3[1]);
+
+	char c[1];
+	int i=0;
+	int length=strlen(reponse);
+	int ok=1;
+	while(read(fd3[0],c,1) && ok){
+		if(i<length){
+			if(reponse[i]!=c[0]){
+				ok=0;
+			}
+		}
+		i++;
+	}
+	if(ok){
+		printf("ok\n");
+	}else{
+		printf("ko\n");
+	}
+}
+
+int main(int argc, char *argv[]){
+	/*char str[] = "ls -la | grep ocucou && wc";*/
+	/*parseCommand(argv[1]);*/
+	createCmd();
+	/*
 	int err=untar("zada/dza/azdazd/dazgreger/gregre/ger/lol.tar.gz");
 	printf("err : %d\n", err);
+	*/
 	/*
 	test_fonction_ecriture_lecture_readWriteFD();
 	printf("TEST2\n");
@@ -55,6 +126,8 @@ int main(int argc, char *argv[]){
 	test_2_read_writeFD();
 	test_3_read_writeFD();
 	*/
+	/*
 	printf("%s\n",get_current_dir_name());	
+	*/
 	return 0;
 }
