@@ -1,6 +1,12 @@
 #include "utils.h"
 
 
+void die(const char* message){
+        perror(message);
+        exit(EXIT_FAILURE);
+}
+
+
 int checkWritingFolder(char* path){
 	/* TODO improve check */
 	DIR* dir;
@@ -8,17 +14,7 @@ int checkWritingFolder(char* path){
 	return dir!=NULL;
 }
 
-void create_leash_directory(){
-
-        /* get home and hidden leaSh directory for data storage */
-
-        char* home = getenv("HOME");
-        char* repertoire_leash = (char*)malloc((sizeof(home)) + 1000*(sizeof(char)));
-        strcpy(repertoire_leash,home);
-        strcat(repertoire_leash,"/.leaSh");
-        char* repertoire_tmp = (char*)malloc((sizeof(home)) + 1000*(sizeof(char)));
-        strcpy(repertoire_tmp,repertoire_leash);
-        strcat(repertoire_tmp,"/tmp");
+void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_tmp){
 
         /* Check / Create .leaSh directory in user home */
 
@@ -28,8 +24,6 @@ void create_leash_directory(){
                                        S_IXGRP| /* and execute */
                                        S_IROTH| /* Grants others the ability to read */
                                        S_IXOTH);/* and execute */
-        } else {
-                printf("Le dossier ~/.leaSh existe deja\n");
         }
 
         if((opendir(repertoire_tmp))==NULL){
@@ -38,34 +32,15 @@ void create_leash_directory(){
                                       S_IXGRP| /* and execute */
                                       S_IROTH| /* Grants others the ability to read */
                                       S_IXOTH);/* and execute */
-        }else{
-		printf("Le dossier ~/.leaSh/tmp existe deja\n");
-	}
+        }
+
 }
 
 
-
-
-int untar(char* path){
+int untar(char* path,char* untarPath){
 	
 
-	char* str = (char*)malloc(strlen(path)+ 1);
-	strcpy(str,path);
-	char* token =  strtok(str,"/");
-	char* tmptoken = token;
-	while(token != NULL){
-		printf("%s\n",token);
-		tmptoken = token;
-		token=strtok(NULL,"/");
-		
-	}
-	
-	char* name = strtok(tmptoken,".");	
-	printf("%s\n",name);
-	
-	char* untarPath = (char*)malloc(1 + strlen(path) + strlen(name));
-	strcpy(untarPath,"/.leaSH/tmp/");
-	strcat(untarPath,name);
+	printf("%s\n",path);	
 	printf("%s\n",untarPath);
 
 	
