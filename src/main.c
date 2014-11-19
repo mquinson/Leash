@@ -3,9 +3,12 @@
 int main(int argc,char** argv){
 	/* variables */
 	int find=0;
+	
+
+	/* check params */ 
+	create_leash_directory();	
 
 
-	/* check params */
 
 	/* untar tar file */
 
