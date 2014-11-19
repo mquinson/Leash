@@ -8,6 +8,44 @@ int checkWritingFolder(char* path){
 	return dir!=NULL;
 }
 
+void create_leash_directory(){
+
+        /* get home and hidden leaSh directory for data storage */
+
+        char* home = getenv("HOME");
+        char* repertoire_leash = (char*)malloc((sizeof(home)) + 1000*(sizeof(char)));
+        strcpy(repertoire_leash,home);
+        strcat(repertoire_leash,"/.leaSh");
+        char* repertoire_tmp = (char*)malloc((sizeof(home)) + 1000*(sizeof(char)));
+        strcpy(repertoire_tmp,repertoire_leash);
+        strcat(repertoire_tmp,"/tmp");
+
+        /* Check / Create .leaSh directory in user home */
+
+        if ((opendir(repertoire_leash))==NULL){
+                mkdir(repertoire_leash,S_IRWXU| /* Gives user right RWX for the directory */
+                                       S_IRGRP| /* Grants the group the ability to read */
+                                       S_IXGRP| /* and execute */
+                                       S_IROTH| /* Grants others the ability to read */
+                                       S_IXOTH);/* and execute */
+        } else {
+                printf("Le dossier ~/.leaSh existe deja\n");
+        }
+
+        if((opendir(repertoire_tmp))==NULL){
+                 mkdir(repertoire_tmp,S_IRWXU| /* Gives user right RWX for the directory */
+                                      S_IRGRP| /* Grants the group the ability to read */
+                                      S_IXGRP| /* and execute */
+                                      S_IROTH| /* Grants others the ability to read */
+                                      S_IXOTH);/* and execute */
+        }else{
+		printf("Le dossier ~/.leaSh/tmp existe deja\n");
+	}
+}
+
+
+
+
 int untar(char* path){
 	
 
