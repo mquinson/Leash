@@ -6,6 +6,7 @@
 
 #include "cmd.h"
 #include "utils.h"
+#include "exec.h"
 
 
 
@@ -111,10 +112,21 @@ void createCmd(){
 	}
 }
 
+void testExec(char* str){
+	Exec* exec = exec_init(str);
+	exec_execute(exec);
+
+	char c[1];
+	printf("--------- RESULT %s ---------\n",str);
+	while(read(exec->fd_out,c,1)){
+		printf("%c",c[0] );
+	}
+}
+
 int main(int argc, char *argv[]){
 	/*char str[] = "ls -la | grep ocucou && wc";*/
-	/*parseCommand(argv[1]);*/
-	createCmd();
+	testExec("pwd && ls | wc");
+	/*createCmd();*/
 	/*
 	int err=untar("zada/dza/azdazd/dazgreger/gregre/ger/lol.tar.gz");
 	printf("err : %d\n", err);
