@@ -23,7 +23,7 @@ PROG = leaSh
 TEST = leaShTest
 
 #liste des programmes AJOUT ici
-LISTE = $(DEST)utils.o $(DEST)cmd.o $(DEST)customlinkedlist.o
+LISTE = $(DEST)utils.o $(DEST)cmd.o $(DEST)customlinkedlist.o $(DEST)exec.o
 
 
 #######################
@@ -79,6 +79,10 @@ $(DEST)utils.o : $(SRC)utils.c
 #compilation cmd
 $(DEST)cmd.o : $(SRC)cmd.c
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)cmd.c -o $(DEST)cmd.o
+
+#compilation exec
+$(DEST)exec.o : $(SRC)exec.c
+	$(CC) $(CFLAGS) $(LIB) -c $(SRC)exec.c -o $(DEST)exec.o
 
 #compilation customlinkedlist
 $(DEST)customlinkedlist.o : $(SRC)customlinkedlist.c
