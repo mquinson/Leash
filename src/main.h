@@ -9,6 +9,7 @@
 
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <limits.h>
 #include "cmd.h"
 #include "utils.h"
 
