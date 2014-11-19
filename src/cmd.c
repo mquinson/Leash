@@ -109,9 +109,11 @@ void cmd_print(Cmd* cmd){
 }
 
 void cmd_exec(Cmd* cmd){
+	printf("%s\n",cmd->nom );
 	int fdin[2]={cmd->fd_in,-1};
 	int fdout[2]={-1,cmd->fd_out};
 	int res=execSimple(cmd->nom, cmd->arguments,fdin,fdout,EXEC_WAIT_SON|EXEC_PIPE_SON);
+	cmd->result=res;
 	if(res){
 		printf("res : %d\n",res );
 		perror("Error exec");
