@@ -85,10 +85,12 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 		printf("BOUHHHHH\n");
 		return 1;
 	}else{
+		int status=0;
 		if(flags & EXEC_WAIT_SON){
-			int status;
+			
 			waitpid(pid,&status,0);
 			if(status){
+				printf("STATUSSSSSSS %d\n",status );
 				return status;
 			}
 			printf("fin : %d\n",status );
@@ -96,10 +98,10 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 				close(in[0]);
 			}
 			if(out){
-				close(out[1]);
+				/*close(out[1]);*/
 			}
 		}
-		return 0;
+		return status;
 
 	}
 }
