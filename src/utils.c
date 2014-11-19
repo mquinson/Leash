@@ -45,7 +45,7 @@ int untar(char* path,char* untarPath){
 
 	
 	if(checkWritingFolder(untarPath)){
-		char* tabargs[6] = {"tar","-zxvf",path,"-C",untarPath,NULL};
+		char* tabargs[6] = {"tar","-zxf",path,"-C",untarPath,NULL};
 		int err = execSimple("tar",tabargs,NULL,NULL,EXEC_WAIT_SON);
 		if(err){
 			printf("Error untar : %d",err);
