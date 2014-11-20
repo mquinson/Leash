@@ -25,6 +25,7 @@ int tarSize(char* path);
 int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags);
 void readWriteFD (int fdin,int fdout);
 int nbWords(char* str);
-void parseCommand(char* command);
+
+char* trim(char* str);
 
 #endif

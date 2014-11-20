@@ -2,8 +2,8 @@
 
 
 void die(const char* message){
-        perror(message);
-        exit(EXIT_FAILURE);
+	perror(message);
+	exit(EXIT_FAILURE);
 }
 
 
@@ -140,64 +140,20 @@ int nbWords(char* str){
 }
 
 
-void parseCommand(char command[]){
-	printf("%s\n",command );
-	int i=0;
-	int length=strlen(command);
-	int nbCmd=1;
-	for(i=0;i<length;i++){
-		if((command[i]=='|' && command[i+1]!='|' && command[i-1]!='|') || (command[i]=='&' && command[i+1]=='&') || (command[i]=='|' && command[i+1]=='|') ){
-			nbCmd++;
-		}
-	}
-	printf("nb commandes : %d\n",nbCmd );
-	char** tabcmd=(char**)malloc(sizeof(char*)*nbCmd);
-	if(nbCmd==1){
-		tabcmd[0]=command;
-	}else{
-		int* link=(int*)malloc(sizeof(int)*nbCmd-1);
-		int next=0;
-		tabcmd[0]=command;
-		int nb=0;
-		for(i=0;i<length;i++){
-			if(next){
-				printf("next\n");
-				next=0;
-				tabcmd[nb]=&command[i];
-			}else if(command[i]=='|' && command[i+1]!='|' && command[i-1]!='|'){
-				printf("|\n");
-				command[i]='\0';
-				link[nb]=1;
-				nb++;
-				next=1;
-			}else if(command[i]=='&'){
-				printf("&...\n");
-				if(i+1<length && command[i+1]=='&'){
-					printf("&&\n");
-					next=1;
-					command[i]='\0';
-					command[i+1]='\0';
-					link[nb]=2;
-					nb++;
-					i++;
-				}
-			}else if(command[i]=='|'){
-				printf("|...\n");
-				if(i+1<length && command[i+1]=='|'){
-					printf("||\n");
-					next=1;
-					command[i]='\0';
-					command[i+1]='\0';
-					link[nb]=3;
-					nb++;
-					i++;
-				}
-			}
-			
-		}
-	}
-	for(i=0;i<nbCmd;i++){
-		printf("%d : %s\n",i,tabcmd[i] );
-	}
 
+char* trim(char *str){
+	char *end;
+
+	while(isspace(*str)){
+		str++;
+	} 
+	if(*str == 0){
+		return str;
+	}
+	end = str + strlen(str) - 1;
+	while(end > str && isspace(*end)){
+		end--;	
+	} 
+	*(end+1) = '\0';
+	return str;
 }
