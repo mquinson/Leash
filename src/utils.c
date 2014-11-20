@@ -18,31 +18,26 @@ void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_t
 
         /* Check / Create .leaSh directory in user home */
 
-        if ((opendir(repertoire_leash))==NULL){
+	if ((opendir(repertoire_leash))==NULL){
                 mkdir(repertoire_leash,S_IRWXU| /* Gives user right RWX for the directory */
                                        S_IRGRP| /* Grants the group the ability to read */
                                        S_IXGRP| /* and execute */
                                        S_IROTH| /* Grants others the ability to read */
                                        S_IXOTH);/* and execute */
-        }
+	}
 
-        if((opendir(repertoire_tmp))==NULL){
+	if((opendir(repertoire_tmp))==NULL){
                  mkdir(repertoire_tmp,S_IRWXU| /* Gives user right RWX for the directory */
                                       S_IRGRP| /* Grants the group the ability to read */
                                       S_IXGRP| /* and execute */
                                       S_IROTH| /* Grants others the ability to read */
                                       S_IXOTH);/* and execute */
-        }
+	}
 
 }
 
 
 int untar(char* path,char* untarPath){
-	
-
-	printf("%s\n",path);	
-	printf("%s\n",untarPath);
-
 	
 	if(checkWritingFolder(untarPath)){
 		char* tabargs[6] = {"tar","-zxf",path,"-C",untarPath,NULL};
@@ -95,7 +90,7 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 		}
 
 		execvp(cmd,args);
-		printf("BOUHHHHH\n");
+		printf("ERROR EXEC SIMPLE !\n");
 		return 1;
 	}else{
 		int status=0;
@@ -103,10 +98,8 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 			
 			waitpid(pid,&status,0);
 			if(status){
-				printf("STATUSSSSSSS %d\n",status );
 				return status;
 			}
-			printf("fin : %d\n",status );
 			if(in){
 				close(in[0]);
 			}
