@@ -52,6 +52,23 @@ Cmd* cmd_init(char str[]){
 				}
 				file_out=-1;
 			}
+			if(file_out==2){
+				printf("file_out==2\n");
+				action=1;
+				if(cmd->fd_out==-1){
+					int file=open(token,O_RDWR|O_CREAT,S_IRWXU);
+					if(file==-1){
+						perror("erreur out");
+					}
+					off_t fsize = lseek(file, 0, SEEK_END);
+					printf("%d\n",fsize );
+					cmd->fd_out=file;
+					
+				}else{
+					printf("%s ignoré\n",token );
+				}
+				file_out=-1;
+			}
 			if(!strcmp("<",token)){
 				if(cmd->fd_in!=-1){
 					printf("Seulement un seul < ,");
@@ -60,11 +77,20 @@ Cmd* cmd_init(char str[]){
 				file_in=1;
 			}
 			if(!strcmp(">",token)){
+				printf(">\n");
 				if(cmd->fd_out!=-1){
 					printf("Seulement un seul > ,");
 				}
 				action=1;
 				file_out=1;
+			}
+			if(!strcmp(">>",token)){
+				printf(">>\n");
+				if(cmd->fd_out!=-1){
+					printf("Seulement un seul >> ,");
+				}
+				action=1;
+				file_out=2;
 			}
 			if(!action){
 				cmd->arguments[i]=(char*)malloc(strlen(token)+1);
