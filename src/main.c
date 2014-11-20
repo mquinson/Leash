@@ -8,24 +8,24 @@ int main(int argc,char* argv[]){
 	/* get home, repertoire_leash and repertoire_tmp path */
 
 	char* home = getenv("HOME");
-        char* repertoire_leash = (char*)malloc((sizeof(home)) + 1000*(sizeof(char)));
-        strcpy(repertoire_leash,home);
-        strcat(repertoire_leash,"/.leaSh");
-        char* repertoire_tmp = (char*)malloc((sizeof(home)) + 1000*(sizeof(char)));
-        strcpy(repertoire_tmp,repertoire_leash);
-        strcat(repertoire_tmp,"/tmp");
+	char* repertoire_leash = (char*)malloc((sizeof(home)) + 1000*(sizeof(char)));
+	strcpy(repertoire_leash,home);
+	strcat(repertoire_leash,"/.leaSh");
+	char* repertoire_tmp = (char*)malloc((sizeof(home)) + 1000*(sizeof(char)));
+	strcpy(repertoire_tmp,repertoire_leash);
+	strcat(repertoire_tmp,"/tmp");
 
 	/* check params */ 
 
 	if(argc != 2){
-                die("Problem launching main \nUsage : ./run level.tgz");
-        } 
+		die("Problem launching main \nUsage : ./run level.tgz");
+	} 
 
 	printf("%s\n",argv[1]);
 	fichier_tar = fopen(argv[1],"r");
- 
+	
 	if (fichier_tar == NULL){
-      		die("Problem with main, file to untar not exist");
+		die("Problem with main, file to untar not exist");
 	}
 
 
