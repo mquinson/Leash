@@ -20,6 +20,6 @@ Meta* meta_init(char* path);
 void meta_dest(Meta* meta);
 
 void meta_print(Meta* meta);
-int isAllowed(char* cmd);
+int isAllowed(Meta* meta,char* cmd);
 
 #endif

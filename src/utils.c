@@ -38,7 +38,7 @@ int checkWritingFolder(char* path){
 	return dir!=NULL;
 }
 
-void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_tmp){
+void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_level){
 
         /* Check / Create .leaSh directory in user home */
 
@@ -49,9 +49,10 @@ void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_t
                                        S_IROTH| /* Grants others the ability to read */
                                        S_IXOTH);/* and execute */
 	}
-
-	if((opendir(repertoire_tmp))==NULL){
-                 mkdir(repertoire_tmp,S_IRWXU| /* Gives user right RWX for the directory */
+	
+	printf("%s\n",repertoire_level);
+	if((opendir(repertoire_level))==NULL){
+                 mkdir(repertoire_level,S_IRWXU| /* Gives user right RWX for the directory */
                                       S_IRGRP| /* Grants the group the ability to read */
                                       S_IXGRP| /* and execute */
                                       S_IROTH| /* Grants others the ability to read */

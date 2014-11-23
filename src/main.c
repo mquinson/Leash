@@ -31,14 +31,18 @@ int main(int argc,char* argv[]){
 	char* repertoire_leash = get_env_leash(home);
 	char* repertoire_level = get_env_level(repertoire_leash,rep_name);
 	
+
+	printf("%s\n",repertoire_level);
 	/* Check / Create leash hidden directory in user home */
 
 	create_leash_directory(home,repertoire_leash,repertoire_level);
 
 	/* untar tar file */
-
+	
 	if(untar(argv[1],repertoire_level) == 0) {
 		printf("fichier untar!\n");
+	}else{
+		printf("PROBLEME\n");
 	}
 	
 		
