@@ -6,6 +6,30 @@ void die(const char* message){
 	exit(EXIT_FAILURE);
 }
 
+char* get_tar_name(char* tar){
+	char* token;
+	token = strtok(tar,"./");
+	printf("%s\n",token);
+	return token;
+}
+
+
+char* get_env_leash(char* home){
+	char* repertoire_leash = (char*)malloc(strlen(home)+1000*sizeof(char));
+	strcpy(repertoire_leash,home);
+	strcat(repertoire_leash,"/.leaSh");
+	return repertoire_leash;
+}
+
+char* get_env_level(char* repertoire_leash,char* name){
+	char* repertoire_level = (char*)malloc(strlen(repertoire_leash)+1000*sizeof(char));
+	strcpy(repertoire_level,repertoire_leash);
+	strcat(repertoire_level,"/");
+	strcat(repertoire_level,name);
+	return repertoire_level;
+}
+	
+
 
 int checkWritingFolder(char* path){
 	/* TODO improve check */
@@ -138,8 +162,6 @@ int nbWords(char* str){
 	}
 	return nbWords;
 }
-
-
 
 char* trim(char *str){
 	char *end;
