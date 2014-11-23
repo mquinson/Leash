@@ -7,22 +7,24 @@ void die(const char* message){
 }
 
 char* get_tar_name(char* tar){
+	char* str = (char*)malloc(strlen(tar));
+	strcpy(str,tar);
 	char* token;
-	token = strtok(tar,"./");
+	token = strtok(str,"./");
 	printf("%s\n",token);
 	return token;
 }
 
 
 char* get_env_leash(char* home){
-	char* repertoire_leash = (char*)malloc(strlen(home)+1000*sizeof(char));
+	char* repertoire_leash = (char*)malloc((strlen(home))+(1000*sizeof(char)));
 	strcpy(repertoire_leash,home);
 	strcat(repertoire_leash,"/.leaSh");
 	return repertoire_leash;
 }
 
 char* get_env_level(char* repertoire_leash,char* name){
-	char* repertoire_level = (char*)malloc(strlen(repertoire_leash)+1000*sizeof(char));
+	char* repertoire_level = (char*)malloc((strlen(repertoire_leash))+(1000*sizeof(char)));
 	strcpy(repertoire_level,repertoire_leash);
 	strcat(repertoire_level,"/");
 	strcat(repertoire_level,name);
