@@ -33,10 +33,10 @@ Cmd* cmd_init(char str[]){
 				if(cmd->fd_in==-1){
 					cmd->fd_in=open(token,O_RDONLY);
 					if(cmd->fd_in==-1){
-						perror("erreur in");
+						printf("erreur ouverture %s\n",token);
 					}
 				}else{
-					printf("%s ignoré\n",token );
+					printf("%s ignoré, il y a déjà un fichier d'éntré\n",token );
 				}
 				file_in=-1;
 			}
@@ -45,27 +45,25 @@ Cmd* cmd_init(char str[]){
 				if(cmd->fd_out==-1){
 					cmd->fd_out=open(token,O_RDWR|O_CREAT|O_TRUNC,S_IRWXU);
 					if(cmd->fd_out==-1){
-						perror("erreur out");
+						printf("erreur ouverture %s\n",token);
 					}
 				}else{
-					printf("%s ignoré\n",token );
+					printf("%s ignoré, il y a déjà un fichier de sortie\n",token );
 				}
 				file_out=-1;
 			}
 			if(file_out==2){
-				printf("file_out==2\n");
 				action=1;
 				if(cmd->fd_out==-1){
 					int file=open(token,O_RDWR|O_CREAT,S_IRWXU);
 					if(file==-1){
-						perror("erreur out");
+						printf("erreur ouverture %s\n",token);
 					}
-					off_t fsize = lseek(file, 0, SEEK_END);
-					printf("%d\n",fsize );
+					lseek(file, 0, SEEK_END);
 					cmd->fd_out=file;
-					
+
 				}else{
-					printf("%s ignoré\n",token );
+					printf("%s ignoré, il y a déjà un fichier de sortie\n",token );
 				}
 				file_out=-1;
 			}
@@ -106,12 +104,12 @@ Cmd* cmd_init(char str[]){
 		token = strtok(NULL, s);
 	}
 	cmd->arguments[i]=NULL;
-	
+
 	cmd->pid=-1;
 	cmd->result=-1;
 	cmd->backquoted=0;
-	
-	
+
+
 	return cmd;
 }
 
