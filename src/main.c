@@ -18,30 +18,27 @@ int main(int argc,char* argv[]){
 	/* check params */ 
 
 	if(argc != 2){
-		die("Problem launching main \nUsage : ./run level.tgz");
+		printf("Problem launching main \nUsage : ./run level.tgz\n");
+		return EXIT_FAILURE;
 	} 
 
-	printf("%s\n",argv[1]);
 	fichier_tar = fopen(argv[1],"r");
-	
+
 	if (fichier_tar == NULL){
 		die("Problem with main, file to untar not exist");
 	}
 
-
 	/* Check / Create leash hidden directory in user home */
 	create_leash_directory(home,repertoire_leash,repertoire_tmp);
-
-	
-
 	
 	/* untar tar file */
-	if(untar(argv[1],repertoire_tmp) == 0) {
-		printf("fichier untar!\n");
+	if(untar(argv[1],repertoire_tmp)) {
+		die("Error to untar");
 	}
-
 	
+	cd(repertoire_tmp);
 
+	Meta* meta = meta_init(repertoire_tmp);
 
 
 	/* init structures, ... */
@@ -50,8 +47,7 @@ int main(int argc,char* argv[]){
 	printf("Bienvenue dans leaSh, le shell pour les nuls et les nulles :P\n");
 
 	/* show authorised commands */
-	printf("Vous pouvez utiliser : ...\n");
-
+	meta_print(meta);
 
 	/* prog loop */
 	while(!find){
