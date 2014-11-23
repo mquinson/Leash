@@ -125,7 +125,8 @@ void testExec(char* str){
 
 int main(int argc, char *argv[]){
 	/*char str[] = "ls -la | grep ocucou && wc";*/
-	testExec("pwd && ls | wc >> testTruc");
+	/*testExec("pwd && ls | wc >> testTruc");*/
+	testExec("cd test");
 	/*createCmd();*/
 	/*
 	int err=untar("zada/dza/azdazd/dazgreger/gregre/ger/lol.tar.gz");

@@ -41,8 +41,6 @@ int main(int argc,char* argv[]){
 	
 	if(untar(argv[1],repertoire_level) == 0) {
 		printf("fichier untar!\n");
-	}else{
-		printf("PROBLEME\n");
 	}
 	
 		
@@ -61,15 +59,31 @@ int main(int argc,char* argv[]){
 
 	/* prog loop */
 	while(!find){
+	
+		char* ligne = NULL;
+		size_t read;
 		/* show $ */
-
+		printf("$");
 		/* collect commands */
+		while(getline(&ligne,&read,0) == -1);
+		line=trim(ligne);
 
 		/* execute */
 
+	        Exec* exec = exec_init(ligne);
+       	 	exec_execute(exec);
+
+        	char c[1];
+        	printf("--------- RESULT %s ---------\n",ligne);
+        	while(read(exec->fd_out,c,1)){
+                	printf("%c",c[0] );
+        
+		}
 		/* check result */
 
-		find=1;
+	
+
+	
 	}
 	printf("Vous avez trouvé, BRAVO !!!\n");
 
