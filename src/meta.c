@@ -72,14 +72,14 @@ void meta_print(Meta* meta){
 	}
 }
 
-int isAllowed(char* cmd){
+int meta_is_allowed(Meta* meta, char* cmd){
 	Elem* e=liste_tete(meta->allowed);
-	if( strcmp((char*)e->object,cmd) == 0={
+	if( strcmp((char*)e->object,cmd) == 0){
 		return 1;
 	}
 	while(liste_a_un_suivant(meta->allowed,e)){
 		e=liste_suivant(meta->allowed,e);
-		if( strcmp((char*)e->object,cmd) == 0={
+		if( strcmp((char*)e->object,cmd) == 0){
 			return 1;
 		}
 	}
