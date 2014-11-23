@@ -13,10 +13,10 @@
 *** une fonction pseudo recursive permettant suivant le lien (|,&,||,...) de lier les cmds
 
 * Taches prioritaires
-** TODO decompression archive
+** DONE decompression archive
 *** TODO securiser ce truc
 ** TODO message d accueil
-** TODO recapitulatif cmd utilisables
+** DONE recapitulatif cmd utilisables
 ** TODO affichage attente utilisateur
 ** TODO valider commande 
 ** DONE parser commande 
@@ -44,3 +44,4 @@
 ** TODO ncurses
 
 ** TODO notoyer le code
+   
