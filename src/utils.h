@@ -26,7 +26,10 @@ int tarSize(char* path);
 int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags);
 void readWriteFD (int fdin,int fdout);
 int nbWords(char* str);
-
 char* trim(char* str);
+char* get_env_leash(char* home);
+char* get_env_level(char* repertoire_leash,char* name);
+char* get_tar_name(char* tar);
+
 
 #endif

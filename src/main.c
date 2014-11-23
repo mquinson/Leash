@@ -5,16 +5,6 @@ int main(int argc,char* argv[]){
 	int find=0;
 	FILE* fichier_tar;
 
-	/* get home, repertoire_leash and repertoire_tmp path */
-
-	char* home = getenv("HOME");
-	char* repertoire_leash = (char*)malloc((sizeof(home)) + 1000*(sizeof(char)));
-	strcpy(repertoire_leash,home);
-	strcat(repertoire_leash,"/.leaSh");
-	char* repertoire_tmp = (char*)malloc((sizeof(home)) + 1000*(sizeof(char)));
-	strcpy(repertoire_tmp,repertoire_leash);
-	strcat(repertoire_tmp,"/tmp");
-
 	/* check params */ 
 
 	if(argc != 2){
@@ -28,23 +18,39 @@ int main(int argc,char* argv[]){
 		die("Problem with main, file to untar not exist");
 	}
 
-	/* Check / Create leash hidden directory in user home */
-	create_leash_directory(home,repertoire_leash,repertoire_tmp);
+
+	/* get fichier_tar name */
 	
+	char* rep_name = get_tar_name(argv[1]);
+	
+	printf("%s\n",rep_name);
+	
+	/* get home, repertoire_leash and repertoire_tmp path */
+
+	char* home = getenv("HOME");
+	char* repertoire_leash = get_env_leash(home);
+	char* repertoire_level = get_env_level(repertoire_leash,rep_name);
+	
+	/* Check / Create leash hidden directory in user home */
+
+	create_leash_directory(home,repertoire_leash,repertoire_level);
+
 	/* untar tar file */
-	if(untar(argv[1],repertoire_tmp)) {
-		die("Error to untar");
+
+	if(untar(argv[1],repertoire_level) == 0) {
+		printf("fichier untar!\n");
 	}
 	
-	cd(repertoire_tmp);
+		
+	cd(repertoire_level);
 
-	Meta* meta = meta_init(repertoire_tmp);
-
+	Meta* meta = meta_init(repertoire_level);
 
 	/* init structures, ... */
 
 	/* Welcome message */
 	printf("Bienvenue dans leaSh, le shell pour les nuls et les nulles :P\n");
+
 
 	/* show authorised commands */
 	meta_print(meta);
@@ -62,7 +68,6 @@ int main(int argc,char* argv[]){
 		find=1;
 	}
 	printf("Vous avez trouvé, BRAVO !!!\n");
-
 
 	return EXIT_SUCCESS;
 }
