@@ -70,20 +70,20 @@ int main(int argc,char* argv[]){
 
 		/* execute */
 
-	        Exec* exec = exec_init(ligne);
-       	 	exec_execute(exec);
+	        Exec* exec = exec_init(meta,ligne);
+	        if(exec == NULL){
+	        	printf("La commande entrée n'est pas autorisée.\n");
+	        }else{
+       	 		exec_execute(exec);
 
-        	char c[1];
-        	printf("--------- RESULT %s ---------\n",ligne);
-        	while(read(exec->fd_out,c,1)){
+        		char c[1];
+        		printf("--------- RESULT %s ---------\n",ligne);
+        		while(read(exec->fd_out,c,1)){
                 	printf("%c",c[0] );
-        
-		}
+        		}
+        	}
 
 		/* check result */
-
-	
-
 	
 	}
 	printf("Vous avez trouvé, BRAVO !!!\n");

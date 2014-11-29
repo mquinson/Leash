@@ -1,6 +1,6 @@
 #include "exec.h"
 
-Exec* exec_init(char* exec){
+Exec* exec_init(Meta* meta,char* exec){
 
 	char* execCpy=(char*)malloc(sizeof(char)*(strlen(exec)+1));
 	strcpy(execCpy,exec);
@@ -56,7 +56,20 @@ Exec* exec_init(char* exec){
 	Exec* execut=(Exec*)malloc(sizeof(Exec));
 	execut->commands=(Cmd**)malloc(sizeof(Cmd*)*nbCmd);
 	for(i=0;i<nbCmd;i++){
-		execut->commands[i]=cmd_init(tabCmdStr[i]);
+
+	
+
+		Cmd* cmd = cmd_init(tabCmdStr[i]);
+		
+		if(meta_is_allowed(meta,cmd->nom)){
+			execut->commands[i]=cmd;
+		}else{
+			if(commands_is_implemented(cmd->nom)){
+                  execut->commands[i]=cmd;
+			}else{
+				return NULL;
+			}
+		}
 	}
 	execut->link=link;
 	execut->nbCommands=nbCmd;
@@ -94,9 +107,6 @@ void exec_execute(Exec* exec){
 			}
 		}
 	}
-
-	
-
 
 
 	int fdPipe[2];

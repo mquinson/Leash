@@ -136,7 +136,23 @@ void cmd_exec(Cmd* cmd){
 	printf("%s\n",cmd->nom );
 	int fdin[2]={cmd->fd_in,-1};
 	int fdout[2]={-1,cmd->fd_out};
-	int res=execSimple(cmd->nom, cmd->arguments,fdin,fdout,EXEC_WAIT_SON|EXEC_PIPE_SON);
+	int res=0;
+	if(!commands_is_implemented(cmd->nom)){
+		res=execSimple(cmd->nom, cmd->arguments,fdin,fdout,EXEC_WAIT_SON|EXEC_PIPE_SON);
+	}else{
+		 if(strcmp("pwd",cmd->nom) == 0){
+    		res=pwd();
+	    }
+
+	    if(strcmp("exit",cmd->nom) == 0){
+	    	res=make_exit();
+	    }
+
+	    if(strcmp("cd",cmd->nom) == 0){
+	    	res=cd(cmd->arguments[0]);
+	    }
+	}
+
 	cmd->result=res;
 	if(res){
 		printf("res : %d\n",res );

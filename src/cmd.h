@@ -11,6 +11,7 @@
 
 
 #include "utils.h"
+#include "commands_implemented.h"
 
 typedef struct{
 	pid_t pid;

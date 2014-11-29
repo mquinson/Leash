@@ -10,6 +10,7 @@
 #include <fcntl.h>
 
 #include "cmd.h"
+#include "meta.h"
 
 typedef enum{
 	EXEC_NONE,
@@ -26,7 +27,7 @@ typedef struct {
 }Exec;
 
 
-Exec* exec_init(char* exec);
+Exec* exec_init(Meta* meta,char* exec);
 void exec_dest(Exec* exec);
 void exec_execute(Exec* exec);
 

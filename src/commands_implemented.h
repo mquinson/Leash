@@ -7,8 +7,10 @@
 #include <linux/limits.h>
 #include <unistd.h>
 
-void pwd();
+#include "utils.h"
+
+int pwd();
 int cd(char* path);
-
-
+int make_exit();
+int commands_is_implemented(char* cmd);
 #endif
