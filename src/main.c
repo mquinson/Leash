@@ -61,12 +61,12 @@ int main(int argc,char* argv[]){
 	while(!find){
 	
 		char* ligne = NULL;
-		size_t read;
+		size_t lu;
 		/* show $ */
 		printf("$");
 		/* collect commands */
-		while(getline(&ligne,&read,0) == -1);
-		line=trim(ligne);
+		while(getline(&ligne,&lu,stdin) == -1);
+		ligne = trim(ligne);
 
 		/* execute */
 
@@ -79,6 +79,7 @@ int main(int argc,char* argv[]){
                 	printf("%c",c[0] );
         
 		}
+
 		/* check result */
 
 	
