@@ -17,7 +17,7 @@ int cd(char* path){
 }
 
 int make_exit(){
-	return 1;
+	return EXIT_SUCCESS;
 }
 
 int commands_is_implemented(char* cmd){

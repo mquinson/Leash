@@ -67,26 +67,43 @@ int main(int argc,char* argv[]){
 		/* collect commands */
 		while(getline(&ligne,&lu,stdin) == -1);
 		ligne = trim(ligne);
+		if(strlen(ligne)==0){
 
-		/* execute */
+		}else{
+			char resultat[1024];
+			int compteur = 0;
+			memset(resultat,0,1024);
 
-	        Exec* exec = exec_init(meta,ligne);
-	        if(exec == NULL){
-	        	printf("La commande entrée n'est pas autorisée.\n");
-	        }else{
-       	 		exec_execute(exec);
+			/* execute */
 
-        		char c[1];
-        		printf("--------- RESULT %s ---------\n",ligne);
-        		while(read(exec->fd_out,c,1)){
-                	printf("%c",c[0] );
+	        	Exec* exec = exec_init(meta,ligne);
+	        	if(exec == NULL){
+	        		printf("La commande entrée n'est pas autorisée.\n");
+	        	}else{
+       	 			exec_execute(exec);
+       	 		
+        		
+        			char c[1];
+        			printf("--------- RESULT %s ---------\n",ligne);
+        			while(read(exec->fd_out,c,1)){
+        		    	if(compteur < 1024){
+        		        	resultat[compteur] = c[0];
+                    	}
+                    	printf("%c",c[0] );
+                    	compteur++;	
+        			}
+        			/* replace \n return value by \0 */
+        			resultat[compteur-1]='\0';
         		}
-        	}
-
+     
 		/* check result */
+        	if(strcmp(resultat,meta->answer)==0){
+        		find = 1;
+        	}
+    	}
 	
 	}
-	printf("Vous avez trouvé, BRAVO !!!\n");
+	printf("\nVous avez trouvé, BRAVO !!!\n");
 
 	return EXIT_SUCCESS;
 }

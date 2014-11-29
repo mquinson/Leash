@@ -64,11 +64,7 @@ Exec* exec_init(Meta* meta,char* exec){
 		if(meta_is_allowed(meta,cmd->nom)){
 			execut->commands[i]=cmd;
 		}else{
-			if(commands_is_implemented(cmd->nom)){
-                  execut->commands[i]=cmd;
-			}else{
-				return NULL;
-			}
+			return NULL;
 		}
 	}
 	execut->link=link;

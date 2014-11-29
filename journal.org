@@ -15,9 +15,9 @@
 * Taches prioritaires
 ** DONE decompression archive
 *** TODO securiser ce truc
-** TODO message d accueil
+** DONE message d accueil
 ** DONE recapitulatif cmd utilisables
-** TODO affichage attente utilisateur
+** DONE affichage attente utilisateur
 ** TODO valider commande 
 ** DONE parser commande 
 ** DONE stockage commande
