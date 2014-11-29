@@ -24,7 +24,7 @@
 ** DONE fonction magique
 ** DONE executer commande 
 ** TODO afficher resultat
-** TODO verifier resultat
+** DONE verifier resultat
 * Taches optionnelles
 ** TODO crypter meta
 ** TODO implementer cd
