@@ -63,7 +63,6 @@ void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_l
 
 }
 
-
 int untar(char* path,char* untarPath){
 	
 	if(checkWritingFolder(untarPath)){
@@ -89,8 +88,14 @@ int tarSize(char* path){
 	return 0;
 }
 
+void handlerchld(int sig){
+	if(sig == SIGCHLD) {
+		printf("SIGCHLD reçu, terminaison du fils\n");
+	}	
+}
 
 int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
+
 
 
 
@@ -101,6 +106,8 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 	}
 
 	if(!pid){
+
+		
 		if(flags & EXEC_PIPE_SON){
 			if(in){
 				dup2(in[0],0);
