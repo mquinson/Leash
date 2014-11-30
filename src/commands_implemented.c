@@ -17,10 +17,11 @@ int cd(char* path){
 }
 
 int make_exit(){
-	return EXIT_SUCCESS;
+	exit(EXIT_SUCCESS);
+	return 0;
 }
 
-int commands_is_implemented(char* cmd){
+/*int commands_is_implemented(char* cmd){
     if(strcmp("pwd",cmd) == 0){
     	return 1;
     }
@@ -34,4 +35,4 @@ int commands_is_implemented(char* cmd){
     }
 
 	return 0;
-}
+}*/
