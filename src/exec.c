@@ -61,7 +61,7 @@ Exec* exec_init(Meta* meta,char* exec){
 
 		Cmd* cmd = cmd_init(tabCmdStr[i]);
 		
-		if(meta_is_allowed(meta,cmd->nom)){
+		if(meta_is_allowed(meta,cmd->nom) || commands_is_implemented(cmd->nom)){
 			execut->commands[i]=cmd;
 		}else{
 			return NULL;

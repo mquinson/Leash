@@ -17,8 +17,11 @@ int cd(char* path){
 }
 
 int make_exit(){
+	die("Fin du programme LeaSh");
 	return EXIT_SUCCESS;
 }
+
+
 
 int commands_is_implemented(char* cmd){
     if(strcmp("pwd",cmd) == 0){
@@ -32,6 +35,5 @@ int commands_is_implemented(char* cmd){
     if(strcmp("cd",cmd) == 0){
     	return 1;
     }
-
 	return 0;
 }
