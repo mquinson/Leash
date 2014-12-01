@@ -17,11 +17,14 @@ int cd(char* path){
 }
 
 int make_exit(){
-	exit(EXIT_SUCCESS);
-	return 0;
+	die("Fin du programme LeaSh");
+	return EXIT_SUCCESS;
 }
 
-/*int commands_is_implemented(char* cmd){
+
+
+int commands_is_implemented(char* cmd){
+
     if(strcmp("pwd",cmd) == 0){
     	return 1;
     }
@@ -33,6 +36,5 @@ int make_exit(){
     if(strcmp("cd",cmd) == 0){
     	return 1;
     }
-
 	return 0;
-}*/
+}

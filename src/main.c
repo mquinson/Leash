@@ -1,10 +1,14 @@
 #include "main.h"
 
+
+
 int main(int argc,char* argv[]){
 	/* variables */
 	int find=0;
-	FILE* fichier_tar;
 
+
+	FILE* fichier_tar;
+	
 	/* check params */ 
 
 	if(argc != 2){
@@ -59,6 +63,7 @@ int main(int argc,char* argv[]){
 
 	/* prog loop */
 	while(!find){
+		
 	
 		char* ligne = NULL;
 		size_t lu;

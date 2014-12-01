@@ -143,14 +143,22 @@ void cmd_exec(Cmd* cmd){
 	}else if(strcmp("exit",cmd->nom) == 0){
 		res=make_exit();
 	}else if(strcmp("cd",cmd->nom) == 0){
-		res=cd(cmd->arguments[0]);
+		res=cd(cmd->arguments[1]);
 	}else{
 		res=execSimple(cmd->nom, cmd->arguments,fdin,fdout,EXEC_WAIT_SON|EXEC_PIPE_SON);
 	}
 	
 
 	cmd->result=res;
-	if(res){
+	/* SIGKILL */
+	/* A tester s'il s'agit d'un sigkill ou non */
+	if(res == 2){
+		res = 0;
+		printf("CTRL-D arrêt du processus en cours\n");
+	}else if(res== 9){
+		res = 0;
+		printf("CTRL-D arrêt du processus en cours\n");
+	}else if(res){
 		printf("res : %d\n",res );
 		perror("Error exec");
 		exit(1);

@@ -1,6 +1,6 @@
 #include "utils.h"
 
-
+int pid;
 void die(const char* message){
 	perror(message);
 	exit(EXIT_FAILURE);
@@ -63,7 +63,6 @@ void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_l
 
 }
 
-
 int untar(char* path,char* untarPath){
 	
 	if(checkWritingFolder(untarPath)){
@@ -90,17 +89,33 @@ int tarSize(char* path){
 }
 
 
+
+
+void handlerchld(int sig){
+	kill(pid,SIGKILL);
+}
+
 int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 
+	
+	struct sigaction nvt,old;	
+	memset(&nvt,0,sizeof(nvt));
+		
+	nvt.sa_handler = &handlerchld;
+    sigaction(SIGINT,&nvt,&old);
+	signal(SIGINT,&handlerchld);
+		
+	int status=0;
 
-
-	int pid=fork();
+	pid=fork();
 	if(pid==-1){
 		perror("Error fork execSimple");
 		return -1;
 	}
 
 	if(!pid){
+		
+		
 		if(flags & EXEC_PIPE_SON){
 			if(in){
 				dup2(in[0],0);
@@ -120,7 +135,8 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 		printf("ERROR EXEC SIMPLE !\n");
 		return 1;
 	}else{
-		int status=0;
+
+		
 		if(flags & EXEC_WAIT_SON){
 			
 			waitpid(pid,&status,0);

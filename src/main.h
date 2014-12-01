@@ -8,6 +8,8 @@
 #include <fcntl.h>
 
 #include <sys/stat.h>
+#include <signal.h>
+
 #include <sys/types.h>
 #include <linux/limits.h>
 

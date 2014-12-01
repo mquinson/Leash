@@ -1,12 +1,17 @@
 #ifndef UTILS_H
 #define UTILS_H
+#define _GNU_SOURCE
 
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <string.h>
+
 #include <sys/types.h>
+#include <signal.h>
+#include <linux/limits.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <ctype.h>
@@ -30,6 +35,6 @@ char* trim(char* str);
 char* get_env_leash(char* home);
 char* get_env_level(char* repertoire_leash,char* name);
 char* get_tar_name(char* tar);
-
+void handlerchld(int sig);
 
 #endif
