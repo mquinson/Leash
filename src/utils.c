@@ -1,6 +1,6 @@
 #include "utils.h"
 
-int pid;
+
 void die(const char* message){
 	perror(message);
 	exit(EXIT_FAILURE);
@@ -11,7 +11,7 @@ char* get_tar_name(char* tar){
 	strcpy(str,tar);
 	char* token;
 	token = strtok(str,"./");
-	printf("%s\n",token);
+	/*printf("%s\n",token);*/
 	return token;
 }
 
@@ -30,7 +30,7 @@ char* get_env_level(char* repertoire_leash,char* name){
 	strcat(repertoire_level,name);
 	return repertoire_level;
 }
-	
+
 
 
 int checkWritingFolder(char* path){
@@ -52,7 +52,7 @@ void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_l
                                        S_IXOTH);/* and execute */
 	}
 	
-	printf("%s\n",repertoire_level);
+	/*printf("%s\n",repertoire_level);*/
 	if((opendir(repertoire_level))==NULL){
                  mkdir(repertoire_level,S_IRWXU| /* Gives user right RWX for the directory */
                                       S_IRGRP| /* Grants the group the ability to read */
@@ -66,11 +66,16 @@ void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_l
 int untar(char* path,char* untarPath){
 	
 	if(checkWritingFolder(untarPath)){
-		char* tabargs[6] = {"tar","-zxf",path,"-C",untarPath,NULL};
-		int err = execSimple("tar",tabargs,NULL,NULL,EXEC_WAIT_SON);
-		if(err){
-			printf("Error untar : %d",err);
-			return 1;
+		char* str = (char*)malloc(strlen("tar -zxf ")+strlen(path)+strlen(" -C ")+strlen(untarPath)+10);
+		sprintf(str,"tar -zxf %s -C %s",path, untarPath);
+		/*char* tabargs[6] = {"tar","-zxf",path,"-C",untarPath,NULL};
+		int err = execSimple("tar",tabargs,NULL,NULL,EXEC_WAIT_SON);*/
+		Cmd* cmdUntar = cmd_init(str);
+		cmd_exec(cmdUntar);
+
+		if(cmdUntar->result){
+			printf("Erreur untar\n");
+			exit(1);
 		}
 	}else{
 		printf("folder read_only/not exists\n");
@@ -90,24 +95,9 @@ int tarSize(char* path){
 
 
 
-
-void handlerchld(int sig){
-	kill(pid,SIGKILL);
-}
-
+/*
 int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
-
-	
-	struct sigaction nvt,old;	
-	memset(&nvt,0,sizeof(nvt));
-		
-	nvt.sa_handler = &handlerchld;
-    sigaction(SIGINT,&nvt,&old);
-	signal(SIGINT,&handlerchld);
-		
-	int status=0;
-
-	pid=fork();
+	int pid=fork();
 	if(pid==-1){
 		perror("Error fork execSimple");
 		return -1;
@@ -147,13 +137,14 @@ int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
 				close(in[0]);
 			}
 			if(out){
-				/*close(out[1]);*/
+				close(out[1]);
 			}
 		}
 		return status;
 
 	}
 }
+*/
 
 void readWriteFD (int fdin,int fdout) {
 	char message[8];

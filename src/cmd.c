@@ -4,7 +4,7 @@
 
 Cmd* cmd_init(char str[]){
 	Cmd* cmd=(Cmd*)malloc(sizeof(Cmd));
-	printf("str : %s\n",str );
+	/*printf("str : %s\n",str );*/
 
 	int i=0;
 
@@ -120,6 +120,7 @@ void cmd_dest(Cmd* cmd){
 	/* TODO Test this*/
 	close(cmd->fd_in);
 	close(cmd->fd_out);
+	free(cmd);
 }
 
 void cmd_print(Cmd* cmd){
@@ -132,24 +133,68 @@ void cmd_print(Cmd* cmd){
 	printf("res : %d\n",cmd->result );
 }
 
+static int pid;
+void handlerchld(int sig){
+	kill(pid,SIGKILL);
+}
+
 void cmd_exec(Cmd* cmd){
-	printf("%s\n",cmd->nom );
+	struct sigaction nvt,old;	
+	memset(&nvt,0,sizeof(nvt));
+		
+	nvt.sa_handler = &handlerchld;
+    sigaction(SIGINT,&nvt,&old);
+	signal(SIGINT,&handlerchld);
+
+
+	/*printf("%s\n",cmd->nom );*/
+
+
 	int fdin[2]={cmd->fd_in,-1};
 	int fdout[2]={-1,cmd->fd_out};
 	int res=0;
 	
-	if(strcmp("pwd",cmd->nom) == 0){
-		res=pwd();
-	}else if(strcmp("exit",cmd->nom) == 0){
-		res=make_exit();
-	}else if(strcmp("cd",cmd->nom) == 0){
-		res=cd(cmd->arguments[1]);
-	}else{
-		res=execSimple(cmd->nom, cmd->arguments,fdin,fdout,EXEC_WAIT_SON|EXEC_PIPE_SON);
-	}
-	
 
-	cmd->result=res;
+
+	pid=fork();
+	if(pid==-1){
+		perror("Error fork execSimple");
+		exit(EXIT_FAILURE);
+	}
+	if(!pid){
+		int res=0;
+		if(cmd->fd_in>=0){
+			dup2(cmd->fd_in,0);
+		}
+		if(cmd->fd_out>=0){
+			dup2(1,2);
+			dup2(cmd->fd_out,1);
+		}
+
+		if(strcmp("pwd",cmd->nom) && strcmp("exit",cmd->nom) && strcmp("cd",cmd->nom)){
+			execvp(cmd->nom,cmd->arguments);
+			return;
+		}else{
+			if(strcmp("pwd",cmd->nom) == 0){
+				res=command_pwd();
+			}else if(strcmp("exit",cmd->nom) == 0){
+				res=command_exit();
+			}else if(strcmp("cd",cmd->nom) == 0){
+				res=command_cd(cmd->arguments[1]);
+			}
+			exit(res);
+		}
+
+	}else{
+		waitpid(pid,&(cmd->result),0);
+		close(cmd->fd_in);
+		if(cmd->result==0 && strcmp("cd",cmd->nom)==0){
+			command_cd(cmd->arguments[1]);
+		}
+		
+	}
+
+	res=cmd->result;
 	/* SIGKILL */
 	/* A tester s'il s'agit d'un sigkill ou non */
 	if(res == 2){
@@ -161,7 +206,6 @@ void cmd_exec(Cmd* cmd){
 	}else if(res){
 		printf("res : %d\n",res );
 		perror("Error exec");
-		exit(1);
 	}
 }
 

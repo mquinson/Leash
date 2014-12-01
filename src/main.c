@@ -5,8 +5,6 @@
 int main(int argc,char* argv[]){
 	/* variables */
 	int find=0;
-
-
 	FILE* fichier_tar;
 	
 	/* check params */ 
@@ -27,7 +25,7 @@ int main(int argc,char* argv[]){
 	
 	char* rep_name = get_tar_name(argv[1]);
 	
-	printf("%s\n",rep_name);
+	/*printf("%s\n",rep_name);*/
 	
 	/* get home, repertoire_leash and repertoire_tmp path */
 
@@ -36,7 +34,7 @@ int main(int argc,char* argv[]){
 	char* repertoire_level = get_env_level(repertoire_leash,rep_name);
 	
 
-	printf("%s\n",repertoire_level);
+	/*printf("%s\n",repertoire_level);*/
 	/* Check / Create leash hidden directory in user home */
 
 	create_leash_directory(home,repertoire_leash,repertoire_level);
@@ -44,11 +42,11 @@ int main(int argc,char* argv[]){
 	/* untar tar file */
 	
 	if(untar(argv[1],repertoire_level) == 0) {
-		printf("fichier untar!\n");
+		/*printf("fichier untar!\n");*/
 	}
 	
-		
-	cd(repertoire_level);
+
+	command_cd(repertoire_level);
 
 	Meta* meta = meta_init(repertoire_level);
 
@@ -64,51 +62,51 @@ int main(int argc,char* argv[]){
 	/* prog loop */
 	while(!find){
 		
-	
+
 		char* ligne = NULL;
 		size_t lu;
 		/* show $ */
-		printf("$");
+		printf("\033[31m$\033[0m:");
 		/* collect commands */
-		while(getline(&ligne,&lu,stdin) == -1);
-		ligne = trim(ligne);
-		if(strlen(ligne)==0){
+			while(getline(&ligne,&lu,stdin) == -1);
+			ligne = trim(ligne);
+			if(strlen(ligne)==0){
 
-		}else{
-			char resultat[1024];
-			int compteur = 0;
-			memset(resultat,0,1024);
+			}else{
+				char resultat[1024];
+				int compteur = 0;
+				memset(resultat,0,1024);
 
 			/* execute */
 
-	        	Exec* exec = exec_init(meta,ligne);
-	        	if(exec == NULL){
-	        		printf("La commande entrée n'est pas autorisée.\n");
-	        	}else{
-       	 			exec_execute(exec);
-       	 		
-        		
-        			char c[1];
-        			printf("--------- RESULT %s ---------\n",ligne);
-        			while(read(exec->fd_out,c,1)){
-        		    	if(compteur < 1024){
-        		        	resultat[compteur] = c[0];
-                    	}
-                    	printf("%c",c[0] );
-                    	compteur++;	
-        			}
-        			/* replace \n return value by \0 */
-        			resultat[compteur-1]='\0';
-        		}
-     
-		/* check result */
-        	if(strcmp(resultat,meta->answer)==0){
-        		find = 1;
-        	}
-    	}
-	
-	}
-	printf("\nVous avez trouvé, BRAVO !!!\n");
+				Exec* exec = exec_init(meta,ligne);
+				if(exec == NULL){
+					printf("La commande entrée n'est pas autorisée.\n");
+				}else{
+					exec_execute(exec);
 
-	return EXIT_SUCCESS;
-}
+
+					char c[1];
+					/*printf("--------- RESULT %s ---------\n",ligne);*/
+					while(read(exec->fd_out,c,1)){
+						if(compteur < 1024){
+							resultat[compteur] = c[0];
+						}
+						printf("%c",c[0] );
+						compteur++;	
+					}
+        			/* replace \n return value by \0 */
+					resultat[compteur-1]='\0';
+				}
+
+		/* check result */
+				if(strcmp(resultat,meta->answer)==0){
+					find = 1;
+				}
+			}
+
+		}
+		printf("\nVous avez trouvé, BRAVO !!!\n");
+
+		return EXIT_SUCCESS;
+	}

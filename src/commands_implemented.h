@@ -9,8 +9,8 @@
 
 #include "utils.h"
 
-int pwd();
-int cd(char* path);
-int make_exit();
+int command_pwd();
+int command_cd(char* path);
+int command_exit();
 /*int commands_is_implemented(char* cmd);*/
 #endif

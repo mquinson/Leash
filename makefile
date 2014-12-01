@@ -13,7 +13,7 @@ SRC = $(DIR)src/
 DEST = $(DIR)bin/
 
 #specification des options du compilateur
-CFLAGS = -ansi -Wall -g
+CFLAGS =  -Wall -g
 
 #librairies
 LIB = 

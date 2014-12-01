@@ -50,6 +50,7 @@ Exec* exec_init(Meta* meta,char* exec){
 
 	}
 	link[nb]=EXEC_NONE;
+	
 
 
 
@@ -57,11 +58,11 @@ Exec* exec_init(Meta* meta,char* exec){
 	execut->commands=(Cmd**)malloc(sizeof(Cmd*)*nbCmd);
 	for(i=0;i<nbCmd;i++){
 
-	
+
 
 		Cmd* cmd = cmd_init(tabCmdStr[i]);
 		
-		if(meta_is_allowed(meta,cmd->nom) || commands_is_implemented(cmd->nom)){
+		if(meta_is_allowed(meta,cmd->nom)){
 			execut->commands[i]=cmd;
 		}else{
 			return NULL;
@@ -113,33 +114,33 @@ void exec_execute(Exec* exec){
 
 		switch(exec->link[i]){
 			case EXEC_NONE:
-				cmd_exec(exec->commands[i]);
-				break;
+			cmd_exec(exec->commands[i]);
+			break;
 			case EXEC_PIPE:
-				pipe(fdPipe);
-				if(exec->commands[i]->fd_out==-1){
-					exec->commands[i]->fd_out=fdPipe[1];
-				}
-				cmd_exec(exec->commands[i]);
-				close(fdPipe[1]);
-				break;
+			pipe(fdPipe);
+			if(exec->commands[i]->fd_out==-1){
+				exec->commands[i]->fd_out=fdPipe[1];
+			}
+			cmd_exec(exec->commands[i]);
+			close(fdPipe[1]);
+			break;
 			case EXEC_OR:
-				cmd_exec(exec->commands[i]);
-				if(exec->commands[i]->result==0){
-					close(fd[1]);
-					return;
-				}
-				break;
-			case EXEC_AND:
-				cmd_exec(exec->commands[i]);
-				if(exec->commands[i]->result!=0){
-					close(fd[1]);
-					return;
-				}
-
-				break;
-			default:
+			cmd_exec(exec->commands[i]);
+			if(exec->commands[i]->result==0){
+				close(fd[1]);
 				return;
+			}
+			break;
+			case EXEC_AND:
+			cmd_exec(exec->commands[i]);
+			if(exec->commands[i]->result!=0){
+				close(fd[1]);
+				return;
+			}
+
+			break;
+			default:
+			return;
 		}
 	}
 	close(fd[1]);

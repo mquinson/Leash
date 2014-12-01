@@ -1,28 +1,47 @@
 #include "commands_implemented.h"
 
-int pwd(){
+int command_pwd(){
 	char* cwd;
-    char buff[PATH_MAX + 1];
-    cwd = getcwd( buff, PATH_MAX + 1 );
-    if( cwd != NULL ) {
-        printf( "My working directory is %s\n", cwd );
-    }
-    return 0;
+	char buff[PATH_MAX + 1];
+	cwd = getcwd( buff, PATH_MAX + 1 );
+	if( cwd != NULL ) {
+		printf( "%s\n", cwd );
+	}
+	return 0;
 }
 
-int cd(char* path){
-	/* TODO verifier chemin */
-	int res=chdir(path);
+int command_cd(char* path){
+	static char* home=NULL;
+	if(home==NULL){
+		home=malloc(sizeof(char)*(strlen(path)+1));
+		strcpy(home,path);
+	}
+	
+	int res=1;
+	if(path==NULL){
+		res=chdir(home);
+	}else{ 
+
+		char* str = trim(path);
+		if(strlen(str)==0 || strcmp(str,"~")==0){
+			res=chdir(home);
+		}else{
+			if(strlen(str)>0 && strcmp(str,"~")!=0){
+				/* TODO verifier chemin */
+				res=chdir(path);
+			}
+		}
+	}
 	return res;
 }
 
-int make_exit(){
+int command_exit(){
 	die("Fin du programme LeaSh");
 	return EXIT_SUCCESS;
 }
 
 
-
+/*
 int commands_is_implemented(char* cmd){
 
     if(strcmp("pwd",cmd) == 0){
@@ -37,4 +56,4 @@ int commands_is_implemented(char* cmd){
     	return 1;
     }
 	return 0;
-}
+}*/
