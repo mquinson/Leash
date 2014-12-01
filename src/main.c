@@ -1,27 +1,14 @@
 #include "main.h"
 
-void handler(int sig){
-	
-	if(sig == SIGINT) {
-		/*TODO A rajouter -> terminaison des fils */
-		kill(0,SIGCHLD);
-		printf("Ctrl-C reçu, terminaison de la commande en cours!\n");
-	
-	}	
 
-}
 
 int main(int argc,char* argv[]){
 	/* variables */
 	int find=0;
 
+
 	FILE* fichier_tar;
-	struct sigaction nvt,old;
 	
-	memset(&nvt,0,sizeof(nvt));
-	nvt.sa_handler = &handler;
-    sigaction(SIGINT,&nvt,&old);
-	signal(SIGINT,&handler);
 	/* check params */ 
 
 	if(argc != 2){

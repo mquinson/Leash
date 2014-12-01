@@ -154,6 +154,10 @@ void cmd_exec(Cmd* cmd){
 	}
 
 	cmd->result=res;
+	res=0;
+	/* SIGKILL */
+	/* A tester s'il s'agit d'un sigkill ou non */
+
 	if(res){
 		printf("res : %d\n",res );
 		perror("Error exec");
