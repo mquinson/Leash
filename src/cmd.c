@@ -20,6 +20,7 @@ Cmd* cmd_init(char str[]){
 	int file_out=0;
 	token = strtok(str, s);
 	int action=0;
+	int doubleQuote=0;
 	while( token != NULL ) {
 		if(i==0){
 			cmd->nom=(char*)malloc(sizeof(char)*(strlen(token)+1));
@@ -89,10 +90,36 @@ Cmd* cmd_init(char str[]){
 				file_out=2;
 			}
 			if(!action){
-				cmd->arguments[i]=(char*)malloc(strlen(token)+1);
-				strcpy(cmd->arguments[i],token);
-				cmd->nbArgs++;
-				i++;
+				if(token[0]=='"'){
+					token=&token[1];
+					doubleQuote=1;
+					cmd->arguments[i]="";
+				}
+				
+				if(doubleQuote){
+					char* prev=cmd->arguments[i];
+					char* new=(char*)malloc(strlen(token)+strlen(prev)+2);
+					memset(new,0,strlen(token)+strlen(prev)+2);
+					if(strlen(prev)>0){
+						strcpy(new,prev);
+						strcat(new," ");
+					}
+					strcat(new,token);
+					cmd->arguments[i]=new;
+					if(token[strlen(token)-1]=='"'){
+						cmd->arguments[i][strlen(cmd->arguments[i])-1]='\0';
+						doubleQuote=0;
+						cmd->nbArgs++;
+						i++;
+					}
+
+				}else{
+					cmd->arguments[i]=(char*)malloc(strlen(token)+1);
+					strcpy(cmd->arguments[i],token);
+					cmd->nbArgs++;
+					i++;
+				}
+				
 			}else{
 				action=0;
 			}
@@ -107,7 +134,9 @@ Cmd* cmd_init(char str[]){
 	cmd->result=-1;
 	cmd->backquoted=0;
 
-
+	/*printf("-------------------\n");
+	cmd_print(cmd);
+	printf("-------------------\n");*/
 	return cmd;
 }
 
@@ -139,9 +168,9 @@ void handlerchld(int sig){
 void cmd_exec(Cmd* cmd){
 	struct sigaction nvt,old;	
 	memset(&nvt,0,sizeof(nvt));
-		
+
 	nvt.sa_handler = &handlerchld;
-    sigaction(SIGINT,&nvt,&old);
+	sigaction(SIGINT,&nvt,&old);
 	signal(SIGINT,&handlerchld);
 
 
