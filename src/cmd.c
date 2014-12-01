@@ -75,7 +75,6 @@ Cmd* cmd_init(char str[]){
 				file_in=1;
 			}
 			if(!strcmp(">",token)){
-				printf(">\n");
 				if(cmd->fd_out!=-1){
 					printf("Seulement un seul > ,");
 				}
@@ -83,7 +82,6 @@ Cmd* cmd_init(char str[]){
 				file_out=1;
 			}
 			if(!strcmp(">>",token)){
-				printf(">>\n");
 				if(cmd->fd_out!=-1){
 					printf("Seulement un seul >> ,");
 				}
@@ -150,8 +148,8 @@ void cmd_exec(Cmd* cmd){
 	/*printf("%s\n",cmd->nom );*/
 
 
-	int fdin[2]={cmd->fd_in,-1};
-	int fdout[2]={-1,cmd->fd_out};
+	/*int fdin[2]={cmd->fd_in,-1};
+	int fdout[2]={-1,cmd->fd_out};*/
 	int res=0;
 	
 
@@ -177,8 +175,6 @@ void cmd_exec(Cmd* cmd){
 		}else{
 			if(strcmp("pwd",cmd->nom) == 0){
 				res=command_pwd();
-			}else if(strcmp("exit",cmd->nom) == 0){
-				res=command_exit();
 			}else if(strcmp("cd",cmd->nom) == 0){
 				res=command_cd(cmd->arguments[1]);
 			}
@@ -190,6 +186,8 @@ void cmd_exec(Cmd* cmd){
 		close(cmd->fd_in);
 		if(cmd->result==0 && strcmp("cd",cmd->nom)==0){
 			command_cd(cmd->arguments[1]);
+		}else if(strcmp("exit",cmd->nom) == 0){
+			res=command_exit();
 		}
 		
 	}
