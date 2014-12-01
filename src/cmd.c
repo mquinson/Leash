@@ -149,16 +149,20 @@ void cmd_exec(Cmd* cmd){
 	    }
 
 	    if(strcmp("cd",cmd->nom) == 0){
-	    	res=cd(cmd->arguments[0]);
+	    	res=cd(cmd->arguments[1]);
 	    }
 	}
 
 	cmd->result=res;
-	res=0;
 	/* SIGKILL */
 	/* A tester s'il s'agit d'un sigkill ou non */
-
-	if(res){
+	if(res == 2){
+		res = 0;
+		printf("CTRL-D arrêt du processus en cours\n");
+	}else if(res== 9){
+		res = 0;
+		printf("CTRL-D arrêt du processus en cours\n");
+	}else if(res){
 		printf("res : %d\n",res );
 		perror("Error exec");
 		exit(1);
