@@ -58,11 +58,11 @@ allfiles : $(LISTE)
 #######################
 
 #compilation main
-$(DEST)main.o : $(SRC)main.c 
+$(DEST)main.o : $(SRC)main.c $(SRC)main.h 
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)main.c -o $(DEST)main.o
 
 #compilation test
-$(DEST)test.o : $(SRC)test.c
+$(DEST)test.o : $(SRC)test.c $(SRC)test.h
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)test.c -o $(DEST)test.o
 
 #######################
@@ -73,27 +73,27 @@ $(DEST)test.o : $(SRC)test.c
 
 
 #compilation utils
-$(DEST)utils.o : $(SRC)utils.c 
+$(DEST)utils.o : $(SRC)utils.c $(SRC)utils.h
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)utils.c -o $(DEST)utils.o
 
 #compilation cmd
-$(DEST)cmd.o : $(SRC)cmd.c
+$(DEST)cmd.o : $(SRC)cmd.c $(SRC)cmd.h
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)cmd.c -o $(DEST)cmd.o
 
 #compilation exec
-$(DEST)exec.o : $(SRC)exec.c
+$(DEST)exec.o : $(SRC)exec.c $(SRC)exec.h
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)exec.c -o $(DEST)exec.o
 
 #compilation commands_implemented
-$(DEST)commands_implemented.o : $(SRC)commands_implemented.c
+$(DEST)commands_implemented.o : $(SRC)commands_implemented.c $(SRC)commands_implemented.h
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)commands_implemented.c -o $(DEST)commands_implemented.o
 
 #compilation meta
-$(DEST)meta.o : $(SRC)meta.c
+$(DEST)meta.o : $(SRC)meta.c $(SRC)meta.h
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)meta.c -o $(DEST)meta.o
 
 #compilation customlinkedlist
-$(DEST)customlinkedlist.o : $(SRC)customlinkedlist.c
+$(DEST)customlinkedlist.o : $(SRC)customlinkedlist.c $(SRC)customlinkedlist.h
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)customlinkedlist.c -o $(DEST)customlinkedlist.o
 
 #########################################################################
