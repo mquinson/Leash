@@ -36,8 +36,8 @@ int command_cd(char* path){
 }
 
 int command_exit(){
-	die("Fin du programme LeaSh");
-	return EXIT_SUCCESS;
+	printf("Fin du programme LeaSh\n");
+	exit(EXIT_SUCCESS);
 }
 
 
