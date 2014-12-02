@@ -189,3 +189,22 @@ char* trim(char *str){
 	*(end+1) = '\0';
 	return str;
 }
+
+
+char * dupstr (char* s) {
+  char* r;
+  r = (char*) leash_malloc ((strlen (s) + 1));
+  strcpy (r, s);
+  return (r);
+}
+ 
+void* leash_malloc (int size){
+    void *buf;
+ 
+    buf = malloc (size);
+    if (!buf) {
+        fprintf (stderr, "Error: Out of memory. Exiting.'n");
+        exit (1);
+    }
+    return buf;
+}

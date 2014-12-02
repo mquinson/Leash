@@ -134,9 +134,6 @@ Cmd* cmd_init(char str[]){
 	cmd->result=-1;
 	cmd->backquoted=0;
 
-	/*printf("-------------------\n");
-	cmd_print(cmd);
-	printf("-------------------\n");*/
 	return cmd;
 }
 

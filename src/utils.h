@@ -37,4 +37,7 @@ char* get_env_level(char* repertoire_leash,char* name);
 char* get_tar_name(char* tar);
 void handlerchld(int sig);
 
+char* dupstr (char*);
+void* leash_malloc (int);
+
 #endif

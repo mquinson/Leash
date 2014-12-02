@@ -26,6 +26,7 @@ void liste_dest(List* l, FonctionFree fct_free);
 void liste_add_last(List* l, void* obj);
 
 Elem* liste_tete(List* l);
+Elem* liste_get(List* l, int nb);
 int liste_a_un_suivant(List* l, Elem* el);
 Elem* liste_suivant(List* l, Elem* el);
 void liste_supprime(List* l, Elem* el);

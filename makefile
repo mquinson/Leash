@@ -16,7 +16,7 @@ DEST = $(DIR)bin/
 CFLAGS =  -Wall -g
 
 #librairies
-LIB = 
+LIB = -lreadline
 
 #nom de l executable
 PROG = leaSh
@@ -41,13 +41,13 @@ test : $(DEST)$(TEST)
 $(DEST)$(PROG) : $(LISTE) $(DEST)main.o
 	@rm -f $(DEST)$(TEST)
 	@rm -f $(DEST)test.o 2>/dev/null
-	$(CC) $(DEST)main.o $(LISTE) -o $(DEST)$(PROG)
+	$(CC) $(LIB) $(DEST)main.o $(LISTE) -o $(DEST)$(PROG)
 
 #programme tests
 $(DEST)$(TEST) : $(LISTE) $(DEST)test.o	
 	@rm -f $(DEST)$(PROG)
 	@rm -f $(DEST)main.o 2>/dev/null
-	$(CC) $(DEST)test.o $(LISTE) -o $(DEST)$(TEST)
+	$(CC) $(LIB) $(DEST)test.o $(LISTE) -o $(DEST)$(TEST)
 
 #compilation des fichiers (hors main et test)
 allfiles : $(LISTE)

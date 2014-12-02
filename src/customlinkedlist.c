@@ -49,6 +49,19 @@ Elem* liste_tete(List* l){
 	return l->tete;
 }
 
+Elem* liste_get(List* l, int nb){
+	Elem* e=l->tete;
+	int i=0;
+	if(nb>=l->size){
+		return elem_init(NULL);
+	}
+	while(i<nb){
+		e=e->suivant;
+		i++;
+	}
+	return e;
+}
+
 
 
 
