@@ -1,7 +1,11 @@
+* TODOS supremes
+** TODO enlever meta une fois analyse
+** TODO verifier cd (stat et strcmp du pwd)
+** TODO ajouter test retour systeme partout
 * Taches hors-sujet
 ** DONE brancher des pipes ensemble
 ** TODO implementer un netoyage de dossier d'extraction
-** TODO tester execSimplce dans les differents cas
+** DONE tester execSimplce dans les differents cas
 ** TODO verifier existance/ecriture dossier/fichier
 *** TODO ameliorer cette fonction
 ** TODO mettre des constantes sur le retour des erreurs
@@ -18,30 +22,28 @@
 ** DONE message d accueil
 ** DONE recapitulatif cmd utilisables
 ** DONE affichage attente utilisateur
-** TODO valider commande 
+** DONE valider commande 
 ** DONE parser commande 
 ** DONE stockage commande
 ** DONE fonction magique
 ** DONE executer commande 
-** TODO afficher resultat
+** DONE afficher resultat
 ** DONE verifier resultat
 * Taches optionnelles
 ** TODO crypter meta
 ** TODO implementer cd
 ** TODO ctrl+D pour quitter
-** TODO implementer exit
-** TODO Ctrl+c interompre les fils mais pas le programme
+** DONE implementer exit
+** DONE Ctrl+c interompre les fils mais pas le programme
 ** DONE implementer < et >
 ** DONE implementer |
-** TODO gerer historique
+** DONE gerer historique
 ** DONE implementer && et || 
-** TODO gerer les guillemets
+** DONE gerer les guillemets
 ** TODO securiser les commandes (cd, ecriture, lecture, decompression,...)
 ** TODO globbing
 ** TODO backquotes
 ** TODO faire des niveaux
-** TODO autocompletion
+** DONE autocompletion
 ** TODO ncurses
-
-** TODO notoyer le code
-   
+** TODO notoyer le code 
