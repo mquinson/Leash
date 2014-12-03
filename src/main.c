@@ -78,53 +78,55 @@ int main(int argc,char* argv[]){
 		char* ligne = NULL;
 
 
-		while((ligne = readline("\033[31m$\033[0m:"))!=NULL) {
-	        //enable auto-complete
-	        rl_bind_key('\t',rl_complete);
-	        
-	        if (ligne[0]!=0){
-	            add_history(ligne);
-	        }
+		ligne = readline("\033[31m$\033[0m:");
+        //enable auto-complete
+        rl_bind_key('\t',rl_complete);
+        
+        if (ligne[0]!=0){
+            add_history(ligne);
+        }
 
-			ligne = trim(ligne);
-			if(strlen(ligne)==0){
+		ligne = trim(ligne);
+		if(strlen(ligne)==0){
 
+		}else{
+			char resultat[1024];
+			int compteur = 0;
+			memset(resultat,0,1024);
+
+			/* execute */
+
+			Exec* exec = exec_init(meta,ligne);
+			if(exec == NULL){
+				printf("La commande entrée n'est pas autorisée.\n");
 			}else{
-				char resultat[1024];
-				int compteur = 0;
-				memset(resultat,0,1024);
-
-				/* execute */
-
-				Exec* exec = exec_init(meta,ligne);
-				if(exec == NULL){
-					printf("La commande entrée n'est pas autorisée.\n");
-				}else{
-					exec_execute(exec);
+				exec_execute(exec);
 
 
-					char c[1];
-					/*printf("--------- RESULT %s ---------\n",ligne);*/
-					while(read(exec->fd_out,c,1)){
-						if(compteur < 1024){
-							resultat[compteur] = c[0];
-						}
-						printf("%c",c[0] );
-						compteur++;	
+				char c[1];
+				/*printf("--------- RESULT %s ---------\n",ligne);*/
+				while(read(exec->fd_out,c,1)){
+					if(compteur < 1024){
+						resultat[compteur] = c[0];
 					}
-	    			/* replace \n return value by \0 */
-					resultat[compteur-1]='\0';
+					printf("%c",c[0] );
+					compteur++;	
 				}
+    			/* replace \n return value by \0 */
+				resultat[compteur-1]='\0';
+			}
 
-				/* check result */
-				if(strcmp(resultat,meta->answer)==0){
-					find = 1;
-				}
+			/* check result */
+			if(strcmp(resultat,meta->answer)==0){
+				find = 1;
 			}
 		}
+		
 
 	}
 	printf("\nVous avez trouvé, BRAVO !!!\n");
+
+
 
 	return EXIT_SUCCESS;
 }
