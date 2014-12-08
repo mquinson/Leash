@@ -46,6 +46,15 @@ Meta* meta_init(char* path){
 		}
 	}
 
+	char* strexit = (char*)malloc(sizeof(char) * 5);
+	strcpy(strexit,"exit");
+	char* strpwd = (char*)malloc(sizeof(char) * 4);
+	strcpy(strpwd,"pwd");
+	char* strcd = (char*)malloc(sizeof(char) * 3);
+	strcpy(strcd,"cd");
+	liste_add_last(meta->allowed,(void*)strexit);	
+	liste_add_last(meta->allowed,(void*)strpwd);
+	liste_add_last(meta->allowed,(void*)strcd);
 	fclose(metaFile);
 	return meta;
 	

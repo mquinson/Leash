@@ -12,6 +12,8 @@ int command_pwd(){
 
 int command_cd(char* path){
 	static char* home=NULL;
+    char* cwd;
+    char buff[PATH_MAX+1];
 	if(home==NULL){
 		home=malloc(sizeof(char)*(strlen(path)+1));
 		strcpy(home,path);
@@ -27,8 +29,21 @@ int command_cd(char* path){
 			res=chdir(home);
 		}else{
 			if(strlen(str)>0 && strcmp(str,"~")!=0){
-				/* TODO verifier chemin */
-				res=chdir(path);
+
+                cwd = getcwd(buff,PATH_MAX+1);
+        
+                    if((res = chdir(path)) == 0) {
+                        cwd = getcwd (buff,PATH_MAX+1);
+                        if((strlen(cwd) >= strlen(home)) && (strncmp(home,cwd,strlen(home)) == 0)){
+                        }else {
+                            res = chdir(home);
+                        }
+
+                    }else{
+                        printf("Le chemin n'est pas accessible\n");
+                    }
+			    
+                cwd = getcwd(buff,PATH_MAX+1);
 			}
 		}
 	}
