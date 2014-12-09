@@ -227,7 +227,20 @@ void cmd_exec(Cmd* cmd){
 		}
 
 		if(strcmp("pwd",cmd->nom) && strcmp("exit",cmd->nom) && strcmp("cd",cmd->nom)){
-			execvp(cmd->nom,cmd->arguments);
+			
+
+
+			glob_t globbuf;
+
+			int i=0;
+			int flags=GLOB_NOCHECK;
+
+			for(i=0;i<cmd->nbArgs;i++){
+				flags |= (i >0 ? GLOB_APPEND : 0);
+				glob(cmd->arguments[i], flags  , NULL, &globbuf);
+			}
+
+			execvp(cmd->nom,globbuf.gl_pathv);
 			return;
 		}else{
 			if(strcmp("pwd",cmd->nom) == 0){
@@ -249,6 +262,7 @@ void cmd_exec(Cmd* cmd){
 				printf("%s",buff);
 				fflush(stdout);
 				write(cmd->fd_out,buff,lu);
+				memset(buff,0,9);
 			}
 			leash_close(fd_out_Y[0]);
 		}

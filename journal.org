@@ -45,7 +45,8 @@
 ** DONE implementer && et || 
 ** DONE gerer les guillemets
 ** TODO securiser les commandes (cd, ecriture, lecture, decompression,...)
-** TODO globbing
+** DONE globbing
+*** TODO tester a fond
 ** TODO backquotes
 ** TODO faire des niveaux
 ** DONE autocompletion
