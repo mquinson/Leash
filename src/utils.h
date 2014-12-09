@@ -39,5 +39,6 @@ void handlerchld(int sig);
 
 char* dupstr (char*);
 void* leash_malloc (int);
+int leash_close(int fd);
 
 #endif

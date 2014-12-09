@@ -1,10 +1,14 @@
 * TODOS supremes
-** TODO enlever meta une fois analyse
+** DONE enlever meta une fois analyse
 ** TODO verifier cd (stat et strcmp du pwd)
 ** TODO ajouter test retour systeme partout
+** TODO changer malloc avec leashMalloc
+** TODO free all
+** DONE loop -> afficher avant le waitpid
+** TODO faire un exit propre
 * Taches hors-sujet
 ** DONE brancher des pipes ensemble
-** TODO implementer un netoyage de dossier d'extraction
+** DONE implementer un netoyage de dossier d'extraction
 ** DONE tester execSimplce dans les differents cas
 ** TODO verifier existance/ecriture dossier/fichier
 *** TODO ameliorer cette fonction
@@ -30,8 +34,8 @@
 ** DONE afficher resultat
 ** DONE verifier resultat
 * Taches optionnelles
-** TODO crypter meta
-** TODO implementer cd
+** DONE crypter meta
+** DONE implementer cd
 ** TODO ctrl+D pour quitter
 ** DONE implementer exit
 ** DONE Ctrl+c interompre les fils mais pas le programme

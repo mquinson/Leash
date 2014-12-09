@@ -7,24 +7,28 @@ void die(const char* message){
 }
 
 char* get_tar_name(char* tar){
-	char* str = (char*)malloc(strlen(tar));
+	char* str = (char*)leash_malloc(strlen(tar)+1);
+	char* svg = str;
 	strcpy(str,tar);
 	char* token;
 	token = strtok(str,"./");
 	/*printf("%s\n",token);*/
-	return token;
+	char* res=(char*)leash_malloc(sizeof(char)*strlen(token)+1);
+	strcpy(res,token);
+	free(svg);
+	return res;
 }
 
 
 char* get_env_leash(char* home){
-	char* repertoire_leash = (char*)malloc((strlen(home))+(1000*sizeof(char)));
+	char* repertoire_leash = (char*)leash_malloc((strlen(home))+(1000*sizeof(char)));
 	strcpy(repertoire_leash,home);
 	strcat(repertoire_leash,"/.leaSh");
 	return repertoire_leash;
 }
 
 char* get_env_level(char* repertoire_leash,char* name){
-	char* repertoire_level = (char*)malloc((strlen(repertoire_leash))+(1000*sizeof(char)));
+	char* repertoire_level = (char*)leash_malloc((strlen(repertoire_leash)+strlen("/")+strlen(name)+1) * sizeof(char));
 	strcpy(repertoire_level,repertoire_leash);
 	strcat(repertoire_level,"/");
 	strcat(repertoire_level,name);
@@ -37,28 +41,28 @@ int checkWritingFolder(char* path){
 	/* TODO improve check */
 	DIR* dir;
 	dir=opendir(path);
-	return dir!=NULL;
+	int res =dir!=NULL;
+	closedir(dir);
+	return res;
 }
 
 void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_level){
 
         /* Check / Create .leaSh directory in user home */
 
-	if ((opendir(repertoire_leash))==NULL){
-                mkdir(repertoire_leash,S_IRWXU| /* Gives user right RWX for the directory */
-                                       S_IRGRP| /* Grants the group the ability to read */
-                                       S_IXGRP| /* and execute */
-                                       S_IROTH| /* Grants others the ability to read */
-                                       S_IXOTH);/* and execute */
+	DIR* dir =opendir(repertoire_leash); 
+	if (dir==NULL){
+        mkdir(repertoire_leash,S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
+	}else{
+		closedir(dir);
 	}
+
 	
-	/*printf("%s\n",repertoire_level);*/
-	if((opendir(repertoire_level))==NULL){
-                 mkdir(repertoire_level,S_IRWXU| /* Gives user right RWX for the directory */
-                                      S_IRGRP| /* Grants the group the ability to read */
-                                      S_IXGRP| /* and execute */
-                                      S_IROTH| /* Grants others the ability to read */
-                                      S_IXOTH);/* and execute */
+	dir=opendir(repertoire_level);
+	if(dir==NULL){
+        mkdir(repertoire_level,S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
+	}else{
+		closedir(dir);
 	}
 
 }
@@ -66,17 +70,18 @@ void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_l
 int untar(char* path,char* untarPath){
 	
 	if(checkWritingFolder(untarPath)){
-		char* str = (char*)malloc(strlen("tar -zxf ")+strlen(path)+strlen(" -C ")+strlen(untarPath)+10);
+		char* str = (char*)leash_malloc(strlen("tar -zxf ")+strlen(path)+strlen(" -C ")+strlen(untarPath)+10);
 		sprintf(str,"tar -zxf %s -C %s",path, untarPath);
 		/*char* tabargs[6] = {"tar","-zxf",path,"-C",untarPath,NULL};
 		int err = execSimple("tar",tabargs,NULL,NULL,EXEC_WAIT_SON);*/
 		Cmd* cmdUntar = cmd_init(str);
+		free(str);
 		cmd_exec(cmdUntar);
-
 		if(cmdUntar->result){
 			printf("Erreur untar\n");
 			exit(1);
 		}
+		cmd_dest(cmdUntar);
 	}else{
 		printf("folder read_only/not exists\n");
 		return 3;
@@ -207,4 +212,12 @@ void* leash_malloc (int size){
         exit (1);
     }
     return buf;
+}
+
+int leash_close(int fd){
+	int res=0;
+	if(fd>=0){
+		res=close(fd);
+	}
+	return res;
 }

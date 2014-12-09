@@ -2,7 +2,7 @@
 
 
 List* liste_init(){
-	List* l = (List*)malloc(sizeof(List));
+	List* l = (List*)leash_malloc(sizeof(List));
 	l->tete=NULL;
 	l->queue=NULL;
 	l->size=0;
@@ -53,7 +53,7 @@ Elem* liste_get(List* l, int nb){
 	Elem* e=l->tete;
 	int i=0;
 	if(nb>=l->size){
-		return elem_init(NULL);
+		return NULL;
 	}
 	while(i<nb){
 		e=e->suivant;
@@ -101,7 +101,7 @@ void liste_supprime(List* l, Elem* el){
 
 
 Elem* elem_init(void* obj){
-	Elem* elem = (Elem*)malloc(sizeof(Elem));
+	Elem* elem = (Elem*)leash_malloc(sizeof(Elem));
 	elem->precedent=NULL;
 	elem->suivant=NULL;
 	elem->object=obj;

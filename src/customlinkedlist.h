@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "utils.h"
+
 typedef struct element{
 	void* object;
 	struct element* precedent;

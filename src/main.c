@@ -1,11 +1,36 @@
 #include "main.h"
 
+
+
 void handlerQuit(int sig){
 	command_exit();
 }
 
-Meta* meta;
+static char* getSetHome(char* h){
+	static char* home=NULL;
+	if(home==NULL && home!=NULL){
+		home = (char*)leash_malloc(sizeof(char)*strlen(h)+1);
+		strcpy(home,h);
+	}
+	return home;
+}
+
+static Meta* meta;
 int main(int argc,char* argv[]){
+
+	if(argc==3){
+		if(!strcmp(argv[1],"-C")){
+			int err=meta_crypt(argv[2]);
+			if(err){
+				printf("Erreur cryptage du fichier meta [%s]\n",argv[2]);
+				return EXIT_FAILURE;
+			}else{
+				printf("Fichier meta [%s] crypté avec succes\n",argv[2]);
+				return EXIT_SUCCESS;
+			}
+		}
+	}
+
 	struct sigaction nvt,old;	
 	memset(&nvt,0,sizeof(nvt));
 
@@ -31,6 +56,7 @@ int main(int argc,char* argv[]){
 	if (fichier_tar == NULL){
 		die("Problem with main, file to untar not exist");
 	}
+	fclose(fichier_tar);
 
 
 	/* get fichier_tar name */
@@ -58,6 +84,8 @@ int main(int argc,char* argv[]){
 	}
 	
 
+	getSetHome(repertoire_level);
+
 	command_cd(repertoire_level);
 
 	meta = meta_init(repertoire_level);
@@ -79,7 +107,6 @@ int main(int argc,char* argv[]){
 
 
 		ligne = readline("\033[31m$\033[0m:");
-        //enable auto-complete
         rl_bind_key('\t',rl_complete);
         
         if (ligne[0]!=0){
@@ -90,12 +117,13 @@ int main(int argc,char* argv[]){
 		if(strlen(ligne)==0){
 
 		}else{
-			char resultat[1024];
-			int compteur = 0;
-			memset(resultat,0,1024);
+			/*int lenResult = strlen(meta->answer);
+			char* resultat=(char*)leash_malloc(sizeof(char*)*(lenResult+1));
+			memset(resultat,0,lenResult+1);*/
 
 			/* execute */
 
+			int compteur = 0;
 			Exec* exec = exec_init(meta,ligne);
 			if(exec == NULL){
 				printf("La commande entrée n'est pas autorisée.\n");
@@ -104,28 +132,49 @@ int main(int argc,char* argv[]){
 
 
 				char c[1];
-				/*printf("--------- RESULT %s ---------\n",ligne);*/
+				int ok=0;
+				int line=0;
 				while(read(exec->fd_out,c,1)){
-					if(compteur < 1024){
-						resultat[compteur] = c[0];
+					if(c[0]=='\n'){
+						line++;
+						if(ok){
+							find=1;
+						}
+						ok=0;
+						compteur=0;
+					}else{
+						if(meta->answer[compteur] != c[0] ){
+							ok=0;
+						}else{
+							ok=1;
+							compteur++;	
+						}
+						
 					}
-					printf("%c",c[0] );
-					compteur++;	
+
 				}
     			/* replace \n return value by \0 */
-				resultat[compteur-1]='\0';
+				/*resultat[compteur-1]='\0';*/
 			}
 
+			exec_dest(exec);
+
 			/* check result */
+			/*printf("res : [%s]\n",resultat );
 			if(strcmp(resultat,meta->answer)==0){
 				find = 1;
-			}
+			}*/
 		}
+		free(ligne);
 		
 
 	}
 	printf("\nVous avez trouvé, BRAVO !!!\n");
 
+
+
+	/* Cleanning*/
+	free(repertoire_level);
 
 
 	return EXIT_SUCCESS;
@@ -153,16 +202,23 @@ char* leash_generator(const char* text, int state){
 		list_index = 0;
 		len = strlen (text);
 	}
-	while( (name= ((char*)(liste_get(meta->allowed, list_index)->object)))  ){
+	
+
+	while( (name= (liste_get(meta->allowed, list_index)==NULL ? NULL : ((char*)(liste_get(meta->allowed, list_index)->object))))){
 		list_index++;
 		if (strncmp (name, text, len) == 0){
 			return (dupstr(name));
 		}
 	}
+
 	return ((char *)NULL);
 
 }
 
 
 
+
+char* leashHome(){
+	return getSetHome(NULL);
+}
 

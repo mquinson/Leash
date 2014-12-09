@@ -15,7 +15,7 @@ int command_cd(char* path){
     char* cwd;
     char buff[PATH_MAX+1];
 	if(home==NULL){
-		home=malloc(sizeof(char)*(strlen(path)+1));
+		home=leash_malloc(sizeof(char)*(strlen(path)+1));
 		strcpy(home,path);
 	}
 	

@@ -13,8 +13,10 @@ Exec* exec_init(Meta* meta,char* exec){
 			nbCmd++;
 		}
 	}
-	char** tabCmdStr=(char**)malloc(sizeof(char*)*nbCmd);
-	int* link=(int*)malloc(sizeof(int)*nbCmd);
+	char** tabCmdStr=(char**)leash_malloc(sizeof(char*)*nbCmd);
+	int* link=(int*)leash_malloc(sizeof(int)*nbCmd);
+	
+	
 	
 	int next=0;
 	tabCmdStr[0]=execCpy;
@@ -54,8 +56,15 @@ Exec* exec_init(Meta* meta,char* exec){
 
 
 
-	Exec* execut=(Exec*)malloc(sizeof(Exec));
-	execut->commands=(Cmd**)malloc(sizeof(Cmd*)*nbCmd);
+	Exec* execut=(Exec*)leash_malloc(sizeof(Exec));
+	execut->fd_out=-1;
+	execut->link=link;
+	execut->nbCommands=nbCmd;
+
+	execut->commands=(Cmd**)leash_malloc(sizeof(Cmd*)*nbCmd);
+	for(i=0;i<nbCmd;i++){
+		execut->commands[i]=NULL;
+	}
 	for(i=0;i<nbCmd;i++){
 
 
@@ -65,11 +74,14 @@ Exec* exec_init(Meta* meta,char* exec){
 		if(meta_is_allowed(meta,cmd->nom)||strcmp(cmd->nom,"cd") == 0){
 			execut->commands[i]=cmd;
 		}else{
+			cmd_dest(cmd);
+			exec_dest(execut);
+			free(tabCmdStr);
+			free(execCpy);
 			return NULL;
 		}
 	}
-	execut->link=link;
-	execut->nbCommands=nbCmd;
+	
 
 
 	free(tabCmdStr);
@@ -80,14 +92,16 @@ Exec* exec_init(Meta* meta,char* exec){
 }
 
 void exec_dest(Exec* exec){
-	int i=0;
-	for(i=0;i<exec->nbCommands;i++){
-		cmd_dest(exec->commands[i]);
+	if(exec!=NULL){
+		leash_close(exec->fd_out);
+		int i=0;
+		for(i=0;i<exec->nbCommands;i++){
+			cmd_dest(exec->commands[i]);
+		}
+		free(exec->commands);
+		free(exec->link);
+		free(exec);
 	}
-	free(exec->commands);
-	free(exec->link);
-	free(exec);
-
 }
 
 
@@ -114,35 +128,36 @@ void exec_execute(Exec* exec){
 
 		switch(exec->link[i]){
 			case EXEC_NONE:
-			cmd_exec(exec->commands[i]);
-			break;
+				cmd_exec(exec->commands[i]);
+				break;
 			case EXEC_PIPE:
-			pipe(fdPipe);
-			if(exec->commands[i]->fd_out==-1){
-				exec->commands[i]->fd_out=fdPipe[1];
-			}
-			cmd_exec(exec->commands[i]);
-			close(fdPipe[1]);
-			break;
+				pipe(fdPipe);
+				if(exec->commands[i]->fd_out==-1){
+					exec->commands[i]->fd_out=fdPipe[1];
+				}
+				exec->commands[i]->print=0;
+				cmd_exec(exec->commands[i]);
+				leash_close(fdPipe[1]);
+				break;
 			case EXEC_OR:
-			cmd_exec(exec->commands[i]);
-			if(exec->commands[i]->result==0){
-				close(fd[1]);
-				return;
-			}
-			break;
+				cmd_exec(exec->commands[i]);
+				if(exec->commands[i]->result==0){
+					leash_close(fd[1]);
+					return;
+				}
+				break;
 			case EXEC_AND:
-			cmd_exec(exec->commands[i]);
-			if(exec->commands[i]->result!=0){
-				close(fd[1]);
-				return;
-			}
-
-			break;
+				cmd_exec(exec->commands[i]);
+				if(exec->commands[i]->result!=0){
+					leash_close(fd[1]);
+					return;
+				}
+	
+				break;
 			default:
-			return;
+				return;
 		}
 	}
-	close(fd[1]);
+	leash_close(fd[1]);
 
 }

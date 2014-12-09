@@ -3,16 +3,16 @@
 
 
 Cmd* cmd_init(char str[]){
-	Cmd* cmd=(Cmd*)malloc(sizeof(Cmd));
+	Cmd* cmd=(Cmd*)leash_malloc(sizeof(Cmd));
 	/*printf("str : %s\n",str );*/
 
 	int i=0;
 
 	cmd->fd_in=-1;
 	cmd->fd_out=-1;
-
+	cmd->print=1;
 	cmd->nbArgs=1;
-	cmd->arguments=(char**)malloc(sizeof(char*)*nbWords(str)+1);
+	cmd->arguments=(char**)leash_malloc(sizeof(char*) * (nbWords(str)+1));
 	char s[2]=" ";
 	char* token;
 	i=0;
@@ -23,9 +23,9 @@ Cmd* cmd_init(char str[]){
 	int doubleQuote=0;
 	while( token != NULL ) {
 		if(i==0){
-			cmd->nom=(char*)malloc(sizeof(char)*(strlen(token)+1));
+			cmd->nom=(char*)leash_malloc(sizeof(char)*(strlen(token)+1));
 			strcpy(cmd->nom,token);
-			cmd->arguments[0]=(char*)malloc(sizeof(char)*(strlen(token)+1));
+			cmd->arguments[0]=(char*)leash_malloc(sizeof(char)*(strlen(token)+1));
 			strcpy(cmd->arguments[0],token);
 			i++;
 		}else{
@@ -47,7 +47,9 @@ Cmd* cmd_init(char str[]){
 					cmd->fd_out=open(token,O_RDWR|O_CREAT|O_TRUNC,S_IRWXU);
 					if(cmd->fd_out==-1){
 						printf("erreur ouverture %s\n",token);
+						break;
 					}
+					cmd->print=0;
 				}else{
 					printf("%s ignoré, il y a déjà un fichier de sortie\n",token );
 				}
@@ -59,10 +61,11 @@ Cmd* cmd_init(char str[]){
 					int file=open(token,O_RDWR|O_CREAT,S_IRWXU);
 					if(file==-1){
 						printf("erreur ouverture %s\n",token);
+						break;
 					}
 					lseek(file, 0, SEEK_END);
 					cmd->fd_out=file;
-
+					cmd->print=0;
 				}else{
 					printf("%s ignoré, il y a déjà un fichier de sortie\n",token );
 				}
@@ -98,7 +101,7 @@ Cmd* cmd_init(char str[]){
 				
 				if(doubleQuote){
 					char* prev=cmd->arguments[i];
-					char* new=(char*)malloc(strlen(token)+strlen(prev)+2);
+					char* new=(char*)leash_malloc(strlen(token)+strlen(prev)+2);
 					memset(new,0,strlen(token)+strlen(prev)+2);
 					if(strlen(prev)>0){
 						strcpy(new,prev);
@@ -114,7 +117,7 @@ Cmd* cmd_init(char str[]){
 					}
 
 				}else{
-					cmd->arguments[i]=(char*)malloc(strlen(token)+1);
+					cmd->arguments[i]=(char*)leash_malloc(strlen(token)+1);
 					strcpy(cmd->arguments[i],token);
 					cmd->nbArgs++;
 					i++;
@@ -128,7 +131,7 @@ Cmd* cmd_init(char str[]){
 		/*printf( "token :  %s\n", token );*/
 		token = strtok(NULL, s);
 	}
-	cmd->arguments[i]=NULL;
+	cmd->arguments[i]=(char*)NULL;
 
 	cmd->pid=-1;
 	cmd->result=-1;
@@ -141,10 +144,17 @@ Cmd* cmd_init(char str[]){
 
 
 void cmd_dest(Cmd* cmd){
-	/* TODO Test this*/
-	close(cmd->fd_in);
-	close(cmd->fd_out);
-	free(cmd);
+	if(cmd!=NULL){
+		free(cmd->nom);
+		int i=0;
+		for(i=0;i<cmd->nbArgs;i++){
+			free(cmd->arguments[i]);
+		}
+		free(cmd->arguments);
+		leash_close(cmd->fd_in);
+		leash_close(cmd->fd_out);
+		free(cmd);
+	}
 }
 
 void cmd_print(Cmd* cmd){
@@ -157,9 +167,17 @@ void cmd_print(Cmd* cmd){
 	printf("res : %d\n",cmd->result );
 }
 
+
+
+int fd_out_Y[2];
+void handlerchld_child(int sig){
+	leash_close(fd_out_Y[1]);
+}
+
 static int pid;
 void handlerchld(int sig){
-	kill(pid,SIGKILL);
+	kill(pid,SIGTERM);
+	leash_close(fd_out_Y[1]);
 }
 
 void cmd_exec(Cmd* cmd){
@@ -170,6 +188,13 @@ void cmd_exec(Cmd* cmd){
 	sigaction(SIGINT,&nvt,&old);
 	signal(SIGINT,&handlerchld);
 
+	struct sigaction nvt2,old2;	
+	memset(&nvt2,0,sizeof(nvt2));
+
+	nvt2.sa_handler = &handlerchld_child;
+	sigaction(SIGCHLD,&nvt2,&old2);
+	signal(SIGCHLD,&handlerchld_child);
+
 
 	/*printf("%s\n",cmd->nom );*/
 
@@ -178,7 +203,9 @@ void cmd_exec(Cmd* cmd){
 	int fdout[2]={-1,cmd->fd_out};*/
 	int res=0;
 	
-
+	
+	/*int fd_out_svg=cmd->fd_out;*/
+	pipe(fd_out_Y);
 
 	pid=fork();
 	if(pid==-1){
@@ -192,7 +219,11 @@ void cmd_exec(Cmd* cmd){
 		}
 		if(cmd->fd_out>=0){
 			dup2(1,2);
-			dup2(cmd->fd_out,1);
+			if(cmd->print){
+				dup2(fd_out_Y[1],1);
+			}else{
+				dup2(cmd->fd_out,1);
+			}
 		}
 
 		if(strcmp("pwd",cmd->nom) && strcmp("exit",cmd->nom) && strcmp("cd",cmd->nom)){
@@ -208,8 +239,23 @@ void cmd_exec(Cmd* cmd){
 		}
 
 	}else{
+		if(cmd->print){
+			char buff[9];
+			buff[8]='\0';
+			memset(buff,0,9);
+			int lu=0;
+			while((lu=read(fd_out_Y[0],&buff,8))){
+				buff[lu]='\0';
+				printf("%s",buff);
+				fflush(stdout);
+				write(cmd->fd_out,buff,lu);
+			}
+			leash_close(fd_out_Y[0]);
+		}
+
+
 		waitpid(pid,&(cmd->result),0);
-		close(cmd->fd_in);
+		leash_close(cmd->fd_in);
 		if(cmd->result==0 && strcmp("cd",cmd->nom)==0){
 			command_cd(cmd->arguments[1]);
 		}else if(strcmp("exit",cmd->nom) == 0){

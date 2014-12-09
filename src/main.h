@@ -26,5 +26,6 @@
 static char** leash_completion(const char*, int ,int);
 char* leash_generator(const char*,int);
 
+char* leashHome();
 
 #endif
