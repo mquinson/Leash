@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
-#define _GNU_SOURCE
+
+/*#define _GNU_SOURCE*/
 
 #include <fcntl.h>
 #include <stdio.h>

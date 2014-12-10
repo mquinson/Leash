@@ -12,6 +12,8 @@ Cmd* cmd_init(char str[]){
 	cmd->fd_out=-1;
 	cmd->print=1;
 	cmd->nbArgs=1;
+	cmd->backquoted_cmd=NULL;
+	cmd->backquoted_index=-1;
 	cmd->arguments=(char**)leash_malloc(sizeof(char*) * (nbWords(str)+1));
 	char s[2]=" ";
 	char* token;
@@ -21,6 +23,7 @@ Cmd* cmd_init(char str[]){
 	token = strtok(str, s);
 	int action=0;
 	int doubleQuote=0;
+	int backQuote=0;
 	while( token != NULL ) {
 		if(i==0){
 			cmd->nom=(char*)leash_malloc(sizeof(char)*(strlen(token)+1));
@@ -98,6 +101,13 @@ Cmd* cmd_init(char str[]){
 					doubleQuote=1;
 					cmd->arguments[i]="";
 				}
+
+				if(token[0]=='`'){
+					cmd->backquoted=1;
+					token=&token[1];
+					backQuote=1;
+					cmd->arguments[i]="";
+				}
 				
 				if(doubleQuote){
 					char* prev=cmd->arguments[i];
@@ -112,6 +122,26 @@ Cmd* cmd_init(char str[]){
 					if(token[strlen(token)-1]=='"'){
 						cmd->arguments[i][strlen(cmd->arguments[i])-1]='\0';
 						doubleQuote=0;
+						cmd->nbArgs++;
+						i++;
+					}
+
+				}else if(backQuote){
+					char* prev=cmd->arguments[i];
+					char* new=(char*)leash_malloc(strlen(token)+strlen(prev)+2);
+					memset(new,0,strlen(token)+strlen(prev)+2);
+					if(strlen(prev)>0){
+						strcpy(new,prev);
+						strcat(new," ");
+					}
+					strcat(new,token);
+					cmd->arguments[i]=new;
+					if(token[strlen(token)-1]=='`'){
+						cmd->arguments[i][strlen(cmd->arguments[i])-1]='\0';
+						cmd->backquoted_cmd=cmd->arguments[i];
+						cmd->backquoted_index=i;
+						cmd->arguments[i]=NULL;
+						backQuote=0;
 						cmd->nbArgs++;
 						i++;
 					}
@@ -137,6 +167,7 @@ Cmd* cmd_init(char str[]){
 	cmd->result=-1;
 	cmd->backquoted=0;
 
+
 	return cmd;
 }
 
@@ -150,6 +181,7 @@ void cmd_dest(Cmd* cmd){
 		for(i=0;i<cmd->nbArgs;i++){
 			free(cmd->arguments[i]);
 		}
+		free(cmd->backquoted_cmd);
 		free(cmd->arguments);
 		leash_close(cmd->fd_in);
 		leash_close(cmd->fd_out);
@@ -164,9 +196,57 @@ void cmd_print(Cmd* cmd){
 		printf("\t%s\n", cmd->arguments[i]);
 	}
 	printf("in : %d, out : %d\n", cmd->fd_in,cmd->fd_out);
+	printf("backquoted_cmd [%d]: %s\n",cmd->backquoted_index,cmd->backquoted_cmd );
 	printf("res : %d\n",cmd->result );
 }
 
+
+char** cmd_exec_backquoted(char* strcmd){
+	Cmd* cmd = cmd_init(strcmd);
+	cmd->print=0;
+	int fd[2];
+	pipe(fd);
+	cmd->fd_out=fd[1];
+
+	cmd_exec(cmd);
+	leash_close(fd[1]);
+
+	List* liste = liste_init();
+
+	int lu=0;
+	char c;
+	int len=0;
+	int size=100;
+	char* str=(char*)malloc(size);
+	memset(str,0,size+1);
+	while((lu=read(fd[0],&c,1))>0){
+		if(c=='\n'){
+			liste_add_last(liste,(void*)strdup(str));
+			memset(str,0,size);
+			len=0;
+		}else{
+			if(len==size-1){
+				size=size*2;
+				str=(char*)realloc(str,size);
+			}
+			str[len]=c;
+			str[len+1]='\0';
+			len++;
+		}
+	}
+	free(str);
+
+	char** res=(char**)malloc(sizeof(char*)*(liste->size+1));
+	int i=0;
+	for(i=0;i<liste->size;i++){
+		res[i]=strdup((char*)liste_get(liste,i)->object);
+	}
+	res[liste->size]=NULL;
+
+	cmd_dest(cmd);
+
+	return res;
+}
 
 
 int fd_out_Y[2];
@@ -177,6 +257,7 @@ void handlerchld_child(int sig){
 static int pid;
 void handlerchld(int sig){
 	kill(pid,SIGTERM);
+	printf("close YYYYYYYYYYYYYYYYYYYY\n");
 	leash_close(fd_out_Y[1]);
 }
 
@@ -239,8 +320,51 @@ void cmd_exec(Cmd* cmd){
 				flags |= (i >0 ? GLOB_APPEND : 0);
 				glob(cmd->arguments[i], flags  , NULL, &globbuf);
 			}
+			cmd->arguments=globbuf.gl_pathv;
+			int nb=0;
+			while(cmd->arguments[nb]!=NULL){
+				nb++;
+			}
+			cmd->nbArgs=nb;
 
-			execvp(cmd->nom,globbuf.gl_pathv);
+
+			if(cmd->backquoted_index!=-1){
+				char** back = cmd_exec_backquoted(cmd->backquoted_cmd);
+				int nbBack=0;				
+				while(back[nbBack]!=NULL){
+					nbBack++;
+				}
+
+				char** args = (char**)leash_malloc(sizeof(char*)*(cmd->nbArgs+nbBack));
+				int i=0;
+				int include=0;
+				int indexArg=0;
+				int indexBack=0;
+				for(i=0;i<cmd->nbArgs+nbBack;i++){
+					if(i==cmd->backquoted_index){
+						include=1;
+						indexArg++;
+					}
+					if(i==cmd->backquoted_index+nbBack){
+						include=0;
+					}
+					if(include){
+						args[i]=back[indexBack];
+						indexBack++;
+					}else{
+						args[i]=cmd->arguments[indexArg];
+						indexArg++;
+					}
+				}
+				args[i]=NULL;
+
+				cmd->arguments=args;
+				cmd->nbArgs=cmd->nbArgs+nbBack;
+				
+			}
+
+
+			execvp(cmd->nom,cmd->arguments);
 			return;
 		}else{
 			if(strcmp("pwd",cmd->nom) == 0){

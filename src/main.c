@@ -169,7 +169,7 @@ int main(int argc,char* argv[]){
 		
 
 	}
-	printf("\nVous avez trouvé, BRAVO !!!\n");
+	printf("\n\033[32m>>>>>>>>>> Vous avez trouvé, BRAVO !!! <<<<<<<<<<\033[0m\n");
 
 
 

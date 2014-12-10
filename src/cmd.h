@@ -11,10 +11,12 @@
 #include <errno.h>
 #include <signal.h>
 #include <glob.h>
+#include <string.h>
 
 
 
 
+#include "customlinkedlist.h"
 #include "utils.h"
 #include "commands_implemented.h"
 
@@ -28,6 +30,8 @@ typedef struct{
 	int fd_in;
 	int fd_out;
 	int print;
+	int backquoted_index;
+	char* backquoted_cmd;
 }Cmd;
 
 
