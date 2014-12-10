@@ -16,7 +16,7 @@ DEST = $(DIR)bin/
 CFLAGS =  -Wall -g -ansi -D_POSIX_SOURCE -D_GNU_SOURCE
 
 #librairies
-LIB = -lreadline
+LIB = -lreadline -lncurses
 
 #nom de l executable
 PROG = leaSh

@@ -244,6 +244,7 @@ char** cmd_exec_backquoted(char* strcmd){
 	res[liste->size]=NULL;
 
 	cmd_dest(cmd);
+	
 
 	return res;
 }
@@ -257,7 +258,6 @@ void handlerchld_child(int sig){
 static int pid;
 void handlerchld(int sig){
 	kill(pid,SIGTERM);
-	printf("close YYYYYYYYYYYYYYYYYYYY\n");
 	leash_close(fd_out_Y[1]);
 }
 
@@ -307,63 +307,63 @@ void cmd_exec(Cmd* cmd){
 			}
 		}
 
-		if(strcmp("pwd",cmd->nom) && strcmp("exit",cmd->nom) && strcmp("cd",cmd->nom)){
 			
 
 
-			glob_t globbuf;
+		glob_t globbuf;
 
+		int i=0;
+		int flags=GLOB_NOCHECK;
+
+		for(i=0;i<cmd->nbArgs;i++){
+			flags |= (i >0 ? GLOB_APPEND : 0);
+			glob(cmd->arguments[i], flags  , NULL, &globbuf);
+		}
+		cmd->arguments=globbuf.gl_pathv;
+		int nb=0;
+		while(cmd->arguments[nb]!=NULL){
+			nb++;
+		}
+		cmd->nbArgs=nb;
+
+
+		if(cmd->backquoted_index!=-1){
+			char** back = cmd_exec_backquoted(cmd->backquoted_cmd);
+			int nbBack=0;				
+			while(back[nbBack]!=NULL){
+				nbBack++;
+			}
+
+			char** args = (char**)leash_malloc(sizeof(char*)*(cmd->nbArgs+nbBack));
 			int i=0;
-			int flags=GLOB_NOCHECK|GLOB_MARK;
-
-			for(i=0;i<cmd->nbArgs;i++){
-				flags |= (i >0 ? GLOB_APPEND : 0);
-				glob(cmd->arguments[i], flags  , NULL, &globbuf);
-			}
-			cmd->arguments=globbuf.gl_pathv;
-			int nb=0;
-			while(cmd->arguments[nb]!=NULL){
-				nb++;
-			}
-			cmd->nbArgs=nb;
-
-
-			if(cmd->backquoted_index!=-1){
-				char** back = cmd_exec_backquoted(cmd->backquoted_cmd);
-				int nbBack=0;				
-				while(back[nbBack]!=NULL){
-					nbBack++;
+			int include=0;
+			int indexArg=0;
+			int indexBack=0;
+			for(i=0;i<cmd->nbArgs+nbBack;i++){
+				if(i==cmd->backquoted_index){
+					include=1;
+					indexArg++;
 				}
-
-				char** args = (char**)leash_malloc(sizeof(char*)*(cmd->nbArgs+nbBack));
-				int i=0;
-				int include=0;
-				int indexArg=0;
-				int indexBack=0;
-				for(i=0;i<cmd->nbArgs+nbBack;i++){
-					if(i==cmd->backquoted_index){
-						include=1;
-						indexArg++;
-					}
-					if(i==cmd->backquoted_index+nbBack){
-						include=0;
-					}
-					if(include){
-						args[i]=back[indexBack];
-						indexBack++;
-					}else{
-						args[i]=cmd->arguments[indexArg];
-						indexArg++;
-					}
+				if(i==cmd->backquoted_index+nbBack){
+					include=0;
 				}
-				args[i]=NULL;
+				if(include){
+					args[i]=back[indexBack];
+					indexBack++;
+				}else{
+					args[i]=cmd->arguments[indexArg];
+					indexArg++;
+				}
+			}
+			args[i]=NULL;
 
-				cmd->arguments=args;
-				cmd->nbArgs=cmd->nbArgs+nbBack;
+			cmd->arguments=args;
+			cmd->nbArgs=cmd->nbArgs+nbBack;
 				
-			}
+		}	
 
-
+		if(strcmp("pwd",cmd->nom) && strcmp("exit",cmd->nom) && strcmp("cd",cmd->nom) && strcmp("about",cmd->nom)){
+		
 			execvp(cmd->nom,cmd->arguments);
 			return;
 		}else{
@@ -371,6 +371,12 @@ void cmd_exec(Cmd* cmd){
 				res=command_pwd();
 			}else if(strcmp("cd",cmd->nom) == 0){
 				res=command_cd(cmd->arguments[1]);
+			}else if(strcmp("about",cmd->nom) == 0){
+				char* arg=" ";
+				if(cmd->nbArgs>1){
+					arg=cmd->arguments[1];
+				}
+				res=command_about(arg);
 			}
 			exit(res);
 		}

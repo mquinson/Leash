@@ -15,7 +15,7 @@ static char* getSetHome(char* h){
 	return home;
 }
 
-static Meta* meta;
+static Meta* leashmeta;
 int main(int argc,char* argv[]){
 
 	if(argc==3){
@@ -88,7 +88,7 @@ int main(int argc,char* argv[]){
 
 	command_cd(repertoire_level);
 
-	meta = meta_init(repertoire_level);
+	leashmeta = meta_init(repertoire_level);
 
 	/* init structures, ... */
 
@@ -97,7 +97,7 @@ int main(int argc,char* argv[]){
 
 
 	/* show authorised commands */
-	meta_print(meta);
+	meta_print(leashmeta);
 
 	/* prog loop */
 	while(!find){
@@ -124,7 +124,7 @@ int main(int argc,char* argv[]){
 			/* execute */
 
 			int compteur = 0;
-			Exec* exec = exec_init(meta,ligne);
+			Exec* exec = exec_init(leashmeta,ligne);
 			if(exec == NULL){
 				printf("La commande entrée n'est pas autorisée.\n");
 			}else{
@@ -143,7 +143,7 @@ int main(int argc,char* argv[]){
 						ok=0;
 						compteur=0;
 					}else{
-						if(meta->answer[compteur] != c[0] ){
+						if(leashmeta->answer[compteur] != c[0] ){
 							ok=0;
 						}else{
 							ok=1;
@@ -204,7 +204,7 @@ char* leash_generator(const char* text, int state){
 	}
 	
 
-	while( (name= (liste_get(meta->allowed, list_index)==NULL ? NULL : ((char*)(liste_get(meta->allowed, list_index)->object))))){
+	while( (name= (liste_get(leashmeta->allowed, list_index)==NULL ? NULL : ((char*)(liste_get(leashmeta->allowed, list_index)->object))))){
 		list_index++;
 		if (strncmp (name, text, len) == 0){
 			return (dupstr(name));
