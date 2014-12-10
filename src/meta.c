@@ -163,7 +163,6 @@ void meta_decryptLine(char* line){
 		}
 		line[i]=c;
 	}
-	printf("res '%s'\n",line );
 
 }
 
