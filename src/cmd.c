@@ -314,7 +314,7 @@ void cmd_exec(Cmd* cmd){
 			glob_t globbuf;
 
 			int i=0;
-			int flags=GLOB_NOCHECK;
+			int flags=GLOB_NOCHECK|GLOB_MARK;
 
 			for(i=0;i<cmd->nbArgs;i++){
 				flags |= (i >0 ? GLOB_APPEND : 0);
