@@ -1,4 +1,5 @@
 #include "commands_implemented.h"
+#include "ananas.h"
 
 int command_pwd(){
 	char* cwd;
@@ -61,7 +62,7 @@ int command_exit(){
 /*****************/
 
 static WINDOW* printAbout(int starty, int startx);
-static WINDOW* printAnanas(int starty, int startx);
+static WINDOW* printAnanas(int i);
 static void destroy_win(WINDOW *local_win);
 
 
@@ -85,7 +86,7 @@ static WINDOW* printAbout(int starty, int startx){
 	return leash_win_about;
 }
 
-static char* ananas = 	
+/*static char* ananas = 	
 "                         `                        \n"         
 "                      `osd-                       \n"         
 "           `+/-`     :y- :y     `                 \n"         
@@ -113,14 +114,17 @@ static char* ananas =
 "                 +y-d`        y:       s/ `/s`    \n"
 "                  `+m/        +s       oo+s:      \n"
 "                    `/s+-`    -h    `:+so-        \n"
-"                       `:+++++om+o+++:`           \n";
+"                       `:+++++om+o+++:`           \n";*/
 
 
-static WINDOW* printAnanas(int starty, int startx){
+static WINDOW* printAnanas(int i){
 	WINDOW *leash_win_ananas;
-	leash_win_ananas = newwin(30, 60, 0, startx);
-	mvwprintw(leash_win_ananas, 0,0,"%s",ananas);
-	mvwprintw(leash_win_ananas, 29,15,"ANANAS");
+	leash_win_ananas = newwin(35, 60, 2, (COLS/2)-25);
+
+	int nb= i%6;
+	nb = (nb==4 ? 2 : (nb==5 ? 1 : nb));
+
+	mvwprintw(leash_win_ananas, 0,0,"%s",ananasTab[nb]);
 	wrefresh(leash_win_ananas);
 	return leash_win_ananas;
 }
@@ -145,7 +149,7 @@ int command_about(char* arg){
 	if(strcmp(arg,"ananas")==0){
 		while(1){
 			c=getch();
-			leash_win_ananas = printAnanas( 10,i);
+			leash_win_ananas = printAnanas(i);
 			tim.tv_sec  = 0;
 			tim.tv_nsec = 150000000L;
 			if(nanosleep(&tim , &tim2) < 0 ){
@@ -156,7 +160,7 @@ int command_about(char* arg){
 				break;
 			}
 			i++;
-			if(i==COLS-70 ){
+			if(i==30){
 				break;
 			}
 
