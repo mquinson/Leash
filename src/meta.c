@@ -60,7 +60,7 @@ Meta* meta_init(char* path){
 
 	char* strexit = (char*)leash_malloc(sizeof(char) * 5);
 	strcpy(strexit,"exit");
-	char* strabout = (char*)leash_malloc(sizeof(char) * 5);
+	char* strabout = (char*)leash_malloc(sizeof(char) * 6);
 	strcpy(strabout,"about");
 	/*char* strpwd = (char*)leash_malloc(sizeof(char) * 4);
 	strcpy(strpwd,"pwd");
