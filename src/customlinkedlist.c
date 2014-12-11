@@ -15,7 +15,6 @@ void liste_dest(List* l, FonctionFree fct_free){
 		Elem* e2 = NULL;
 		int first=1;
 		while(liste_a_un_suivant(l,e1) || first>0){
-
 			e2=e1;
 			if(first>0){
 				first=0;
@@ -61,9 +60,6 @@ Elem* liste_get(List* l, int nb){
 	}
 	return e;
 }
-
-
-
 
 
 int liste_a_un_suivant(List* l, Elem* el){

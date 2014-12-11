@@ -17,5 +17,4 @@ int command_pwd();
 int command_cd(char* path);
 int command_exit();
 int command_about(char* arg);
-/*int commands_is_implemented(char* cmd);*/
 #endif

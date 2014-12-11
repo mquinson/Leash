@@ -4,7 +4,6 @@
 
 Cmd* cmd_init(char str[]){
 	Cmd* cmd=(Cmd*)leash_malloc(sizeof(Cmd));
-	/*printf("str : %s\n",str );*/
 
 	int i=0;
 
@@ -15,6 +14,7 @@ Cmd* cmd_init(char str[]){
 	cmd->backquoted_cmd=NULL;
 	cmd->backquoted_index=-1;
 	cmd->arguments=(char**)leash_malloc(sizeof(char*) * (nbWords(str)+1));
+	
 	char s[2]=" ";
 	char* token;
 	i=0;
@@ -158,7 +158,6 @@ Cmd* cmd_init(char str[]){
 			}
 
 		}
-		/*printf( "token :  %s\n", token );*/
 		token = strtok(NULL, s);
 	}
 	cmd->arguments[i]=(char*)NULL;
@@ -244,7 +243,6 @@ char** cmd_exec_backquoted(char* strcmd){
 	res[liste->size]=NULL;
 
 	cmd_dest(cmd);
-	
 
 	return res;
 }
@@ -276,16 +274,8 @@ void cmd_exec(Cmd* cmd){
 	sigaction(SIGCHLD,&nvt2,&old2);
 	signal(SIGCHLD,&handlerchld_child);
 
-
-	/*printf("%s\n",cmd->nom );*/
-
-
-	/*int fdin[2]={cmd->fd_in,-1};
-	int fdout[2]={-1,cmd->fd_out};*/
 	int res=0;
-	
-	
-	/*int fd_out_svg=cmd->fd_out;*/
+
 	pipe(fd_out_Y);
 
 	pid=fork();
@@ -307,9 +297,6 @@ void cmd_exec(Cmd* cmd){
 			}
 		}
 
-			
-
-
 		glob_t globbuf;
 
 		int i=0;
@@ -325,7 +312,6 @@ void cmd_exec(Cmd* cmd){
 			nb++;
 		}
 		cmd->nbArgs=nb;
-
 
 		if(cmd->backquoted_index!=-1){
 			char** back = cmd_exec_backquoted(cmd->backquoted_cmd);
@@ -412,14 +398,14 @@ void cmd_exec(Cmd* cmd){
 	/* SIGKILL */
 	/* A tester s'il s'agit d'un sigkill ou non */
 	if(res == 2){
-		res = 0;
-		printf("CTRL-D arrêt du processus en cours\n");
+		/*res = 0;*/
+		/*printf("CTRL-D arrêt du processus en cours\n");*/
 	}else if(res== 9){
-		res = 0;
-		printf("CTRL-D arrêt du processus en cours\n");
+		/*res = 0;*/
+		/*printf("CTRL-D arrêt du processus en cours\n");*/
 	}else if(res){
-		printf("res : %d\n",res );
-		perror("Error exec");
+		/*printf("res : %d\n",res );
+		perror("Error exec");*/
 	}
 }
 

@@ -1,6 +1,6 @@
 #include "main.h"
 
-
+static Meta* leashmeta;
 
 void handlerQuit(int sig){
 	command_exit();
@@ -15,9 +15,10 @@ static char* getSetHome(char* h){
 	return home;
 }
 
-static Meta* leashmeta;
+
 int main(int argc,char* argv[]){
 
+	/* Cryptage */
 	if(argc==3){
 		if(!strcmp(argv[1],"-C")){
 			int err=meta_crypt(argv[2]);
@@ -45,7 +46,6 @@ int main(int argc,char* argv[]){
 	FILE* fichier_tar;
 	
 	/* check params */ 
-
 	if(argc != 2){
 		printf("Problem launching main \nUsage : ./run level.tgz\n");
 		return EXIT_FAILURE;
@@ -63,24 +63,21 @@ int main(int argc,char* argv[]){
 	
 	char* rep_name = get_tar_name(argv[1]);
 	
-	/*printf("%s\n",rep_name);*/
-	
 	/* get home, repertoire_leash and repertoire_tmp path */
 
 	char* home = getenv("HOME");
 	char* repertoire_leash = get_env_leash(home);
 	char* repertoire_level = get_env_level(repertoire_leash,rep_name);
 	
-
-	/*printf("%s\n",repertoire_level);*/
 	/* Check / Create leash hidden directory in user home */
 
 	create_leash_directory(home,repertoire_leash,repertoire_level);
 
 	/* untar tar file */
 	
-	if(untar(argv[1],repertoire_level) == 0) {
-		/*printf("fichier untar!\n");*/
+	if(untar(argv[1],repertoire_level)) {
+		printf("Erreur lors de l'extraction de l'archive\n");
+		return EXIT_FAILURE;
 	}
 	
 
@@ -114,13 +111,7 @@ int main(int argc,char* argv[]){
         }
 
 		ligne = trim(ligne);
-		if(strlen(ligne)==0){
-
-		}else{
-			/*int lenResult = strlen(meta->answer);
-			char* resultat=(char*)leash_malloc(sizeof(char*)*(lenResult+1));
-			memset(resultat,0,lenResult+1);*/
-
+		if(strlen(ligne)>0){
 			/* execute */
 
 			int compteur = 0;
@@ -153,17 +144,9 @@ int main(int argc,char* argv[]){
 					}
 
 				}
-    			/* replace \n return value by \0 */
-				/*resultat[compteur-1]='\0';*/
 			}
 
 			exec_dest(exec);
-
-			/* check result */
-			/*printf("res : [%s]\n",resultat );
-			if(strcmp(resultat,meta->answer)==0){
-				find = 1;
-			}*/
 		}
 		free(ligne);
 		

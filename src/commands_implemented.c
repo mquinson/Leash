@@ -86,36 +86,6 @@ static WINDOW* printAbout(int starty, int startx){
 	return leash_win_about;
 }
 
-/*static char* ananas = 	
-"                         `                        \n"         
-"                      `osd-                       \n"         
-"           `+/-`     :y- :y     `                 \n"         
-"           s+.:oo+` -h`   m`/oood                 \n"         
-"           d.   `-s+y:    ds-` ++                 \n"         
-"           d-      /N.    `   `d`                 \n"        
-"           +s       `        `y-                  \n"
-"    .://////m-              -y:                   \n"
-"  +s+-...`...`        `.://sdo//:.                \n"
-"  :y+.             ./sdyo+sd///+oyhs:`            \n"
-"   `-oo/-.`     `:s+-------N--------:d+`          \n"
-"      `/yhs-   -syy        d-        d+o+`        \n"
-"     -o+-`    +s..h        s/        o+ :s/       \n"
-"    oo.      oh:::N/:::::::sh::::::::sh::/hy`     \n"
-"   oy....-::od....h:.--.-..:m--------:m----/y.    \n"
-"   ://///::-so    o/        d.        m`    -h`   \n"
-"            y:    :s        s/        y:     /y   \n"
-"            y/````.d  ``````/y        s+      h-  \n"
-"            +d++++oNo+oooo+ooN+++++++/yh++++++ho  \n"
-"            `d`    h.        m`       -h      /y  \n"
-"             +s    s/        y:       `m      +o  \n"
-"              y/   /o        /s        N`     h-  \n"
-"              `h/../h````````:d````````d-````:y   \n"
-"               `yh+/N//++////+mo+++++++myooosh.   \n"
-"                 +y-d`        y:       s/ `/s`    \n"
-"                  `+m/        +s       oo+s:      \n"
-"                    `/s+-`    -h    `:+so-        \n"
-"                       `:+++++om+o+++:`           \n";*/
-
 
 static WINDOW* printAnanas(int i){
 	WINDOW *leash_win_ananas;
@@ -156,22 +126,14 @@ int command_about(char* arg){
 				break;
 			}
 			destroy_win(leash_win_ananas);
-			if(c>0){
-				break;
-			}
 			i++;
-			if(i==30){
+			if(i==30 || c>0){
 				break;
 			}
-
-
 		}
-
 	}else{
-		
 		while(1){
 			c=getch();
-
 			leash_win_about = printAbout( 0,i);
 			tim.tv_sec  = 0;
 			tim.tv_nsec = 150000000L;
@@ -179,22 +141,14 @@ int command_about(char* arg){
 				break;
 			}
 			destroy_win(leash_win_about);
-			if(c>0){
-				break;
-			}
 			i++;
-			if(i==COLS-34){
+			if(i==COLS-34 || c>0){
 				break;
 			}
-
-
 		}
 	}
-
-
 	refresh();
 	endwin();
-
 	return 0;
 }
 

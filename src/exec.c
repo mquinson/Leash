@@ -16,8 +16,6 @@ Exec* exec_init(Meta* meta,char* exec){
 	char** tabCmdStr=(char**)leash_malloc(sizeof(char*)*nbCmd);
 	int* link=(int*)leash_malloc(sizeof(int)*nbCmd);
 	
-	
-	
 	int next=0;
 	tabCmdStr[0]=execCpy;
 	int nb=0;
@@ -52,9 +50,6 @@ Exec* exec_init(Meta* meta,char* exec){
 
 	}
 	link[nb]=EXEC_NONE;
-	
-
-
 
 	Exec* execut=(Exec*)leash_malloc(sizeof(Exec));
 	execut->fd_out=-1;
@@ -66,11 +61,7 @@ Exec* exec_init(Meta* meta,char* exec){
 		execut->commands[i]=NULL;
 	}
 	for(i=0;i<nbCmd;i++){
-
-
-
 		Cmd* cmd = cmd_init(tabCmdStr[i]);
-		
 		if(meta_is_allowed(meta,cmd->nom) ||strcmp(cmd->nom,"about") == 0 /*||strcmp(cmd->nom,"cd") == 0*/  ){
 			execut->commands[i]=cmd;
 		}else{
@@ -81,8 +72,6 @@ Exec* exec_init(Meta* meta,char* exec){
 			return NULL;
 		}
 	}
-	
-
 
 	free(tabCmdStr);
 	free(execCpy);
@@ -118,7 +107,6 @@ void exec_execute(Exec* exec){
 			}
 		}
 	}
-
 
 	int fdPipe[2];
 	for(i=0;i<exec->nbCommands;i++){
