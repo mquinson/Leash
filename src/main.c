@@ -114,9 +114,7 @@ int main(int argc,char* argv[]){
         		}
 
 			ligne = trim(ligne);
-			if(strlen(ligne)==0){
-		
-			}else{
+			if(strlen(ligne)>0){
 				/*int lenResult = strlen(meta->answer);
 				char* resultat=(char*)leash_malloc(sizeof(char*)*(lenResult+1));
 				memset(resultat,0,lenResult+1);*/
