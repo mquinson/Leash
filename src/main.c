@@ -37,7 +37,7 @@ int main(int argc,char* argv[]){
 	nvt.sa_handler = &handlerQuit;
 	sigaction(SIGQUIT,&nvt,&old);
 	signal(SIGQUIT,&handlerQuit);
-
+	
 	rl_attempted_completion_function = leash_completion;
 
 	/* variables */
@@ -107,63 +107,67 @@ int main(int argc,char* argv[]){
 
 
 		ligne = readline("\033[31m$\033[0m:");
-        rl_bind_key('\t',rl_complete);
+        	rl_bind_key('\t',rl_complete);
         
-        if (ligne[0]!=0){
-            add_history(ligne);
-        }
-
-		ligne = trim(ligne);
-		if(strlen(ligne)==0){
-
+		if(ligne==NULL){
+			command_exit();
 		}else{
-			/*int lenResult = strlen(meta->answer);
-			char* resultat=(char*)leash_malloc(sizeof(char*)*(lenResult+1));
-			memset(resultat,0,lenResult+1);*/
+			if (strlen(ligne)!=0){
+            			add_history(ligne);
+        		}
 
-			/* execute */
-
-			int compteur = 0;
-			Exec* exec = exec_init(leashmeta,ligne);
-			if(exec == NULL){
-				printf("La commande entrée n'est pas autorisée.\n");
+			ligne = trim(ligne);
+			if(strlen(ligne)==0){
+		
 			}else{
-				exec_execute(exec);
+				/*int lenResult = strlen(meta->answer);
+				char* resultat=(char*)leash_malloc(sizeof(char*)*(lenResult+1));
+				memset(resultat,0,lenResult+1);*/
+
+				/* execute */
+
+				int compteur = 0;
+				Exec* exec = exec_init(leashmeta,ligne);
+				if(exec == NULL){
+					printf("La commande entrée n'est pas autorisée.\n");
+				}else{
+					exec_execute(exec);
 
 
-				char c[1];
-				int ok=0;
-				int line=0;
-				while(read(exec->fd_out,c,1)){
-					if(c[0]=='\n'){
-						line++;
-						if(ok){
-							find=1;
-						}
-						ok=0;
-						compteur=0;
-					}else{
-						if(leashmeta->answer[compteur] != c[0] ){
+					char c[1];
+					int ok=0;
+					int line=0;
+					while(read(exec->fd_out,c,1)){
+						if(c[0]=='\n'){
+							line++;
+							if(ok){
+								find=1;
+							}
 							ok=0;
+							compteur=0;
 						}else{
-							ok=1;
-							compteur++;	
+							if(leashmeta->answer[compteur] != c[0] ){
+								ok=0;
+							}else{
+								ok=1;
+								compteur++;	
+							}
+							
 						}
-						
+	
 					}
-
+		    			/* replace \n return value by \0 */
+					/*resultat[compteur-1]='\0';*/
 				}
-    			/* replace \n return value by \0 */
-				/*resultat[compteur-1]='\0';*/
+	
+				exec_dest(exec);
+
+				/* check result */
+				/*printf("res : [%s]\n",resultat );
+				if(strcmp(resultat,meta->answer)==0){
+					find = 1;
+				}*/
 			}
-
-			exec_dest(exec);
-
-			/* check result */
-			/*printf("res : [%s]\n",resultat );
-			if(strcmp(resultat,meta->answer)==0){
-				find = 1;
-			}*/
 		}
 		free(ligne);
 		
