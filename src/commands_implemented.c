@@ -128,6 +128,7 @@ int command_about(char* arg){
 			destroy_win(leash_win_ananas);
 			i++;
 			if(i==30 || c>0){
+				fprintf(stdout, "ANANAS\n");
 				break;
 			}
 		}
