@@ -12,7 +12,6 @@ char* get_tar_name(char* tar){
 	strcpy(str,tar);
 	char* token;
 	token = strtok(str,"./");
-	/*printf("%s\n",token);*/
 	char* res=(char*)leash_malloc(sizeof(char)*strlen(token)+1);
 	strcpy(res,token);
 	free(svg);
@@ -38,7 +37,6 @@ char* get_env_level(char* repertoire_leash,char* name){
 
 
 int checkWritingFolder(char* path){
-	/* TODO improve check */
 	DIR* dir;
 	dir=opendir(path);
 	int res =dir!=NULL;
@@ -47,9 +45,6 @@ int checkWritingFolder(char* path){
 }
 
 void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_level){
-
-        /* Check / Create .leaSh directory in user home */
-
 	DIR* dir =opendir(repertoire_leash); 
 	if (dir==NULL){
         mkdir(repertoire_leash,S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
@@ -57,14 +52,12 @@ void create_leash_directory(char* home,char* repertoire_leash,char* repertoire_l
 		closedir(dir);
 	}
 
-	
 	dir=opendir(repertoire_level);
 	if(dir==NULL){
         mkdir(repertoire_level,S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH|S_IXOTH);
 	}else{
 		closedir(dir);
 	}
-
 }
 
 int untar(char* path,char* untarPath){
@@ -72,8 +65,6 @@ int untar(char* path,char* untarPath){
 	if(checkWritingFolder(untarPath)){
 		char* str = (char*)leash_malloc(strlen("tar -zxf ")+strlen(path)+strlen(" -C ")+strlen(untarPath)+10);
 		sprintf(str,"tar -zxf %s -C %s",path, untarPath);
-		/*char* tabargs[6] = {"tar","-zxf",path,"-C",untarPath,NULL};
-		int err = execSimple("tar",tabargs,NULL,NULL,EXEC_WAIT_SON);*/
 		Cmd* cmdUntar = cmd_init(str);
 		free(str);
 		cmd_exec(cmdUntar);
@@ -98,63 +89,9 @@ int tarSize(char* path){
 	return 0;
 }
 
-
-
-/*
-int execSimple(char* cmd, char* args[], int in[2], int out[2], int flags){
-	int pid=fork();
-	if(pid==-1){
-		perror("Error fork execSimple");
-		return -1;
-	}
-
-	if(!pid){
-		
-		
-		if(flags & EXEC_PIPE_SON){
-			if(in){
-				dup2(in[0],0);
-				close(in[1]);
-			}
-			if(out){
-				dup2(1,2);
-				dup2(out[1],1);
-			}
-		}else{
-			close(0);
-			close(1);
-			close(2);
-		}
-
-		execvp(cmd,args);
-		printf("ERROR EXEC SIMPLE !\n");
-		return 1;
-	}else{
-
-		
-		if(flags & EXEC_WAIT_SON){
-			
-			waitpid(pid,&status,0);
-			if(status){
-				return status;
-			}
-			if(in){
-				close(in[0]);
-			}
-			if(out){
-				close(out[1]);
-			}
-		}
-		return status;
-
-	}
-}
-*/
-
 void readWriteFD (int fdin,int fdout) {
 	char message[8];
 	int r;	
-
 	while((r=read(fdin,message,8))>0){
 		write(fdout,message,r);
 	}
