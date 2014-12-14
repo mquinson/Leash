@@ -127,7 +127,7 @@ int main(int argc,char* argv[]){
 					printf("La commande entrée n'est pas autorisée.\n");
 				}else{
 					exec_execute(exec);
-
+					printf("%s\n",leashmeta->answer);
 
 					char c[1];
 					int ok=0;
@@ -136,10 +136,11 @@ int main(int argc,char* argv[]){
 						if(c[0]=='\n'){
 							line++;
 							if(ok){
-								find=1;
-							}
-							ok=0;
-							compteur=0;
+								printf("new line\n");
+								compteur++;
+							}					
+							compteur++;
+							
 						}else{
 							if(leashmeta->answer[compteur] != c[0] ){
 								ok=0;
@@ -150,6 +151,9 @@ int main(int argc,char* argv[]){
 							
 						}
 	
+					}
+					if(ok) {
+						find = 1;
 					}
 		    			/* replace \n return value by \0 */
 					/*resultat[compteur-1]='\0';*/
