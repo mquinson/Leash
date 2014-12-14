@@ -82,6 +82,7 @@ static char* leash =
 " | |___|  __/ (_| |____) | | | |\n"
 " |______\\___|\\__,_|_____/|_| |_|";
 
+/* permet d'afficher LeaSh avec un deffilement horizontal */
 static WINDOW* printAbout(int starty, int startx){
 	WINDOW *leash_win_about;
 	leash_win_about = newwin(11, 40, 0, startx);
@@ -92,7 +93,7 @@ static WINDOW* printAbout(int starty, int startx){
 	return leash_win_about;
 }
 
-
+/* permet d'afficher un ananas dansant, easter egg :D */
 static WINDOW* printAnanas(int i){
 	WINDOW *leash_win_ananas;
 	leash_win_ananas = newwin(35, 60, 2, (COLS/2)-25);
@@ -105,13 +106,18 @@ static WINDOW* printAnanas(int i){
 	return leash_win_ananas;
 }
 
-
+/* detruit la fenetre cree precedement afin de faire le deplacement */
 static void destroy_win(WINDOW *local_win){	
 	wborder(local_win, ' ', ' ', ' ',' ',' ',' ',' ',' ');
 	wrefresh(local_win);
 	delwin(local_win);
 }
 
+
+/* 
+	commande personnalise about
+	utilise NCURSES pour faire une ptite animation
+*/
 int command_about(char* arg){
 	WINDOW* leash_win_about;
 	WINDOW* leash_win_ananas;
@@ -123,6 +129,7 @@ int command_about(char* arg){
 
 	struct timespec tim,tim2;
 	if(strcmp(arg,"ananas")==0){
+		/* si l'argument passe est 'ananas' alors on joue l'easter egg */
 		while(1){
 			c=getch();
 			leash_win_ananas = printAnanas(i);
@@ -139,6 +146,7 @@ int command_about(char* arg){
 			}
 		}
 	}else{
+		/* sinon on joue le definlement du leash*/
 		while(1){
 			c=getch();
 			leash_win_about = printAbout( 0,i);
