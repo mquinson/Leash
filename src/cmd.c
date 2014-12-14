@@ -96,13 +96,13 @@ Cmd* cmd_init(char str[]){
 				file_out=2;
 			}
 			if(!action){
-				if(token[0]=='"'){
+				if(token[0]=='"' && !doubleQuote){
 					token=&token[1];
 					doubleQuote=1;
 					cmd->arguments[i]="";
 				}
 
-				if(token[0]=='`'){
+				if(token[0]=='`' &&!backQuote){
 					cmd->backquoted=1;
 					token=&token[1];
 					backQuote=1;
