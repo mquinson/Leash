@@ -128,9 +128,9 @@ int main(int argc,char* argv[]){
 				}else{
 					exec_execute(exec);
 					char c[1];
-					int ok=1;
+					int ok=0;
 					int line=0;
-					while(read(exec->fd_out,c,1)&&ok){
+					while(read(exec->fd_out,c,1)){
 						if(c[0]=='\n'){
 							line++;
 							if(ok){
