@@ -7,14 +7,22 @@ void die(const char* message){
 }
 
 char* get_tar_name(char* tar){
-	char* str = (char*)leash_malloc(strlen(tar)+1);
-	char* svg = str;
-	strcpy(str,tar);
-	char* token;
-	token = strtok(str,"./");
-	char* res=(char*)leash_malloc(sizeof(char)*strlen(token)+1);
-	strcpy(res,token);
-	free(svg);
+	int i;
+	for(i=strlen(tar)-1;i>=0;i--){
+		if(tar[i]=='/'){
+			i++;
+			break;
+		}
+	}
+	char* token=&tar[i];
+	for(i=0;i<strlen(token);i++){
+		if(token[i]=='.'){
+			break;
+		}
+	}
+
+	char* res=(char*)leash_malloc(sizeof(char)*(i+1));
+	strncpy(res,token,i);
 	return res;
 }
 
