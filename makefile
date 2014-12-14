@@ -62,7 +62,7 @@ $(DEST)main.o : $(SRC)main.c $(SRC)main.h
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)main.c -o $(DEST)main.o
 
 #compilation test
-$(DEST)test.o : $(SRC)test.c $(SRC)test.h
+$(DEST)test.o : $(SRC)test.c
 	$(CC) $(CFLAGS) $(LIB) -c $(SRC)test.c -o $(DEST)test.o
 
 #######################
