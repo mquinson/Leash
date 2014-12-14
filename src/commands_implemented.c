@@ -1,6 +1,7 @@
 #include "commands_implemented.h"
 #include "ananas.h"
 
+/* commande personnalisee pwd */
 int command_pwd(){
 	char* cwd;
 	char buff[PATH_MAX + 1];
@@ -11,8 +12,11 @@ int command_pwd(){
 	return 0;
 }
 
+/* commande personnalisee cd */
 int command_cd(char* path){
+        /* la variable home est definie en tant que static pour ne pas qu'elle change au cours de l'utilisation du programme */
 	static char* home=NULL;
+        /* on get le current working directory */
 	char* cwd;
 	char buff[PATH_MAX+1];
 	if(home==NULL){
@@ -21,22 +25,26 @@ int command_cd(char* path){
 	}
 	
 	int res=1;
+        /* si le path est null, la commande tappee par l'user est "cd" sans arguments donc on redirige vers le home */
 	if(path==NULL){
 		res=chdir(home);
 	}else{ 
 
 		char* str = trim(path);
+                /* on trim le path pour plus de precautions et on regarde si la longueur est toujours de 0 ou si l'user a tappe cd ~ pour retourner dans le home du programme */
 		if(strlen(str)==0 || strcmp(str,"~")==0){
 			res=chdir(home);
 		}else{
 			if(strlen(str)>0 && strcmp(str,"~")!=0){
 
 				cwd = getcwd(buff,PATH_MAX+1);
-
+                                /* on get le cwd */
 				if((res = chdir(path)) == 0) {
-					cwd = getcwd (buff,PATH_MAX+1);
+					cwd = getcwd (buff,PATH_MAX+1); 
+                                        /* on regarde si le path tappe est contenu dans le home suivant */
 					if((strlen(cwd) >= strlen(home)) && (strncmp(home,cwd,strlen(home)) == 0)){
 					}else {
+                                                /* sinon on revient vers le home */
 						res = chdir(home);
 					}
 
@@ -64,8 +72,6 @@ int command_exit(){
 static WINDOW* printAbout(int starty, int startx);
 static WINDOW* printAnanas(int i);
 static void destroy_win(WINDOW *local_win);
-
-
 
 
 static char* leash = 

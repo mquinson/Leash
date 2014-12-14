@@ -1,15 +1,20 @@
 #include "meta.h"
 
+/* Fonction permettant d'initialiser la structure meta */
 Meta* meta_init(char* path){
-	Meta* meta = (Meta*)leash_malloc(sizeof(Meta));
 
+	/* on alloue meta une quantite d'espace en memoire */
+	Meta* meta = (Meta*)leash_malloc(sizeof(Meta));
+        /* on met le chemin approprie */
 	char* metaPath = (char*)leash_malloc(sizeof(char)*strlen(path)+strlen("/meta")+strlen(".crypt")+1);
 	strcpy(metaPath,path),
 	strcat(metaPath,"/meta");
 
+      
 	meta->answer=(char*)NULL;
 	meta->allowed = liste_init();
-
+        
+        /* on regarde si le fichier meta a ete crypte ou non */         
 	int crypted=0;
 	FILE* metaFile = fopen(metaPath,"r");
 	if(metaFile==NULL){
@@ -21,10 +26,12 @@ Meta* meta_init(char* path){
 		}
 		crypted=1;
 	}
-
+        
+        /* on initialise notre ligne et la variable str */
 	char line[1024];
 	char* str;
 	while (fgets(line, sizeof(line), metaFile)) {
+                /* on regarde si meta est crypte */
 		if(crypted){
 			meta_decryptLine(line);
 		}
@@ -35,9 +42,11 @@ Meta* meta_init(char* path){
 				break;
 			}
 		}
+                /* on reprends une deuxieme ligne qui sera cette fois un char* afin de la stocker dans les differents champs de meta */
 		char* line2;
 		if(strlen(line)>0){
 			switch(line[0]){
+                                /* on switch suivant le debut de la ligne */
 				case '>':
 					line2=trim(&line[1]);
 					meta->answer=(char*)leash_malloc(sizeof(char)*(strlen(line2)+1));
@@ -58,6 +67,8 @@ Meta* meta_init(char* path){
 		}
 	}
 
+
+        /* On ajoute manuellement les commandes de bases que l'utilisateur pourra tout le temps faire, quelque soit le fichier meta */
 	char* strexit = (char*)leash_malloc(sizeof(char) * 5);
 	strcpy(strexit,"exit");
 	char* strabout = (char*)leash_malloc(sizeof(char) * 6);
@@ -71,13 +82,17 @@ Meta* meta_init(char* path){
 	/*liste_add_last(meta->allowed,(void*)strpwd);
 	liste_add_last(meta->allowed,(void*)strcd);*/
 
-	fclose(metaFile);
+	
+        /* on close et on supprime meta, pour eviter la fraude et les fuites memoires */
+        fclose(metaFile);
 	remove(metaPath);
 	free(metaPath);
 	return meta;
+        
 	
 }
 
+/* Destruction du fichier meta */
 void meta_dest(Meta* meta){
 	free(meta->answer);
 	Elem* e=liste_tete(meta->allowed);
@@ -89,6 +104,8 @@ void meta_dest(Meta* meta){
 	free(meta);
 }
 
+
+/* Affichage du contenue du fichier meta */
 void meta_print(Meta* meta){
 	printf("Vous pouvez utiliser : \n");
 	Elem* e=liste_tete(meta->allowed);
@@ -99,7 +116,7 @@ void meta_print(Meta* meta){
 	}
 }
 
-
+/* Fonction qui regarde si la commande est autorisee ou non */
 int meta_is_allowed(Meta* meta, char* cmd){
 	Elem* e=liste_tete(meta->allowed);
 	if( strcmp((char*)e->object,cmd) == 0){
@@ -116,13 +133,14 @@ int meta_is_allowed(Meta* meta, char* cmd){
 }
 
 
+/* Fonction de cryptage du fichier meta */
 int meta_crypt(char* path){
 	FILE* metaFile = fopen(path,"r");
 	if(metaFile==NULL){
 		printf("Erreur ouverture %s\n",path);
 		return 1;
 	}
-
+        /* on initialise les chemins du fichier meta.crypt */
 	char* extention = ".crypt";
 	char* pathCrypt = (char*)leash_malloc(sizeof(char)*(strlen(path)+strlen(extention)+1));
 	strcpy(pathCrypt,path);
@@ -133,6 +151,7 @@ int meta_crypt(char* path){
 		return 2;
 	}
 
+        /* on regarde chaque caractere du fichier jusqu'a trouver un end of file */
 	char c;
 	while( (c=fgetc(metaFile))!= EOF ){
 		if(c>='a' && c<='z'){
@@ -151,6 +170,8 @@ int meta_crypt(char* path){
 
 }
 
+
+/* Fonction permettant de decrypter un char* rentre en parametre*/
 void meta_decryptLine(char* line){
 	int len = strlen(line);
 	int i;
