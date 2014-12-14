@@ -127,16 +127,13 @@ int main(int argc,char* argv[]){
 					printf("La commande entrée n'est pas autorisée.\n");
 				}else{
 					exec_execute(exec);
-					printf("%s\n",leashmeta->answer);
-
 					char c[1];
-					int ok=0;
+					int ok=1;
 					int line=0;
-					while(read(exec->fd_out,c,1)){
+					while(read(exec->fd_out,c,1)&&ok){
 						if(c[0]=='\n'){
 							line++;
 							if(ok){
-								printf("new line\n");
 								compteur++;
 							}					
 							compteur++;
