@@ -21,16 +21,23 @@
 #include "commands_implemented.h"
 
 typedef struct{
+	/* pid permettant le kill lors d'un ctrl-C */
 	pid_t pid;
 	char* nom;
 	int nbArgs;
 	char** arguments;
 	int result;
+	/* booleen a vrai s'il y a une commande avec des backquote a l'interieur*/
 	int backquoted;
+	/* descripteur de fichier d'entre */
 	int fd_in;
+	/* descripteur de fichier de sortie */
 	int fd_out;
+	/* booleen a vrai si la sortie doit etre ecrit sur l'ecran */
 	int print;
+	/* index de la commande backquote dans le tableau d'argument */
 	int backquoted_index;
+	/* commande backquote */
 	char* backquoted_cmd;
 }Cmd;
 

@@ -20,9 +20,12 @@ typedef enum{
 }EXEC_MODE;
 
 typedef struct {
+	/* tableau des commandes */
 	Cmd** commands;
+	/* lien en les commandes (pipe, et, ou)*/
 	int* link;
 	int nbCommands;
+	/* tube analyse a la fin de l'execution */
 	int fd_out;
 }Exec;
 

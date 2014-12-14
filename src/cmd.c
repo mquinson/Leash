@@ -1,6 +1,10 @@
 #include "cmd.h"
 
-
+/*
+	cmd_init 
+	A partir d'une chaine de caractère, on cree une commande avec des redirections de fichier
+	la commande sera composé de la commande, des arguments, redirection de fichier et backquotes
+*/
 
 Cmd* cmd_init(char str[]){
 	Cmd* cmd=(Cmd*)leash_malloc(sizeof(Cmd));
@@ -26,6 +30,7 @@ Cmd* cmd_init(char str[]){
 	int backQuote=0;
 	while( token != NULL ) {
 		if(i==0){
+			/* Le premier parametre est le nom de la commande */
 			cmd->nom=(char*)leash_malloc(sizeof(char)*(strlen(token)+1));
 			strcpy(cmd->nom,token);
 			cmd->arguments[0]=(char*)leash_malloc(sizeof(char)*(strlen(token)+1));
@@ -33,6 +38,7 @@ Cmd* cmd_init(char str[]){
 			i++;
 		}else{
 			if(file_in==1){
+				/* Si on a rencontre le char '<' */
 				action=1;
 				if(cmd->fd_in==-1){
 					cmd->fd_in=open(token,O_RDONLY);
@@ -45,6 +51,7 @@ Cmd* cmd_init(char str[]){
 				file_in=-1;
 			}
 			if(file_out==1){
+				/* Si on a rencontre le char '>' */
 				action=1;
 				if(cmd->fd_out==-1){
 					cmd->fd_out=open(token,O_RDWR|O_CREAT|O_TRUNC,S_IRWXU);
@@ -59,6 +66,7 @@ Cmd* cmd_init(char str[]){
 				file_out=-1;
 			}
 			if(file_out==2){
+				/* Si on a rencontre les char '>>' */
 				action=1;
 				if(cmd->fd_out==-1){
 					int file=open(token,O_RDWR|O_CREAT,S_IRWXU);
@@ -75,6 +83,7 @@ Cmd* cmd_init(char str[]){
 				file_out=-1;
 			}
 			if(!strcmp("<",token)){
+				/* On s'attend a avoir un fichier apres */
 				if(cmd->fd_in!=-1){
 					printf("Seulement un seul < ,");
 				}
@@ -82,6 +91,7 @@ Cmd* cmd_init(char str[]){
 				file_in=1;
 			}
 			if(!strcmp(">",token)){
+				/* On s'attend a avoir un fichier apres */
 				if(cmd->fd_out!=-1){
 					printf("Seulement un seul > ,");
 				}
@@ -89,6 +99,7 @@ Cmd* cmd_init(char str[]){
 				file_out=1;
 			}
 			if(!strcmp(">>",token)){
+				/* On s'attend a avoir un fichier apres */
 				if(cmd->fd_out!=-1){
 					printf("Seulement un seul >> ,");
 				}
@@ -97,12 +108,14 @@ Cmd* cmd_init(char str[]){
 			}
 			if(!action){
 				if(token[0]=='"' && !doubleQuote){
+					/* Si on rencontre une double quote, on gardera le parametre comme un seul argument */
 					token=&token[1];
 					doubleQuote=1;
 					cmd->arguments[i]="";
 				}
 
 				if(token[0]=='`' &&!backQuote){
+					/* Si on rencontre une backquote, on met la chaine dans l'attribut backquote_cmd jusqu'a la fermeture*/
 					cmd->backquoted=1;
 					token=&token[1];
 					backQuote=1;
@@ -110,6 +123,7 @@ Cmd* cmd_init(char str[]){
 				}
 				
 				if(doubleQuote){
+					/* On concatene dans le meme parametre pour les double quote */
 					char* prev=cmd->arguments[i];
 					char* new=(char*)leash_malloc(strlen(token)+strlen(prev)+2);
 					memset(new,0,strlen(token)+strlen(prev)+2);
@@ -127,6 +141,7 @@ Cmd* cmd_init(char str[]){
 					}
 
 				}else if(backQuote){
+					/* On concatene dans le meme parametre pour les back quote */
 					char* prev=cmd->arguments[i];
 					char* new=(char*)leash_malloc(strlen(token)+strlen(prev)+2);
 					memset(new,0,strlen(token)+strlen(prev)+2);
@@ -147,6 +162,7 @@ Cmd* cmd_init(char str[]){
 					}
 
 				}else{
+					/* Un simple argument */
 					cmd->arguments[i]=(char*)leash_malloc(strlen(token)+1);
 					strcpy(cmd->arguments[i],token);
 					cmd->nbArgs++;
@@ -200,6 +216,17 @@ void cmd_print(Cmd* cmd){
 }
 
 
+
+/* 
+	cmd_exec_backquoted
+	permet d'executer une commande donnee par chaine de caractere
+	en tant que commande dans des backquote
+
+	La difference avec une commande normal est que le resultat est stocke dans un tableau
+	qui sera insere dans le tableau d'argument de la commande principale
+
+*/
+
 char** cmd_exec_backquoted(char* strcmd){
 	Cmd* cmd = cmd_init(strcmd);
 	cmd->print=0;
@@ -220,6 +247,8 @@ char** cmd_exec_backquoted(char* strcmd){
 	memset(str,0,size+1);
 	while((lu=read(fd[0],&c,1))>0){
 		if(c=='\n'){
+			/* on ajoute l'argument dans une nouvelle case du tableau
+			lorsqu'on rencontre \n */
 			liste_add_last(liste,(void*)strdup(str));
 			memset(str,0,size);
 			len=0;
@@ -260,6 +289,7 @@ void handlerchld(int sig){
 }
 
 void cmd_exec(Cmd* cmd){
+	/* Mise en place des signal pour ctrl-C et ctrl-\ */
 	struct sigaction nvt,old;	
 	memset(&nvt,0,sizeof(nvt));
 
@@ -278,34 +308,50 @@ void cmd_exec(Cmd* cmd){
 
 	pipe(fd_out_Y);
 
+	/* on cree le fils pour executer la commande */
 	pid=fork();
 	if(pid==-1){
 		perror("Error fork execSimple");
 		exit(EXIT_FAILURE);
 	}
 	if(!pid){
+
+		/* FILS */
+
 		int res=0;
 		if(cmd->fd_in>=0){
+			/* on branche le fichier d'entree sur la commande */
 			dup2(cmd->fd_in,0);
 		}
 		if(cmd->fd_out>=0){
+			/* on branche le fichier de sortie sur la commande ou le pipe de sortie*/
 			dup2(1,2);
 			if(cmd->print){
+				/* 
+				Si on affiche du texte (il n'y a pas de redirection de fichier > ou >>
+				alors on ecrit dans un pipe qui sera lu pendant l'execution puis comparé plus tard
+				*/
 				dup2(fd_out_Y[1],1);
 			}else{
+				/* Sinon on met la sortie sur le fichier donné en parametre*/
 				dup2(cmd->fd_out,1);
 			}
 		}
 
+
+		/* GLOBBING */
 		glob_t globbuf;
 
 		int i=0;
 		int flags=GLOB_NOCHECK;
 
+		/* on essai d'appliquer le globbing sur chaque argument
+		grace au flag GLOB_NOCHECK on prend en compte les parametres non globbable*/
 		for(i=0;i<cmd->nbArgs;i++){
 			flags |= (i >0 ? GLOB_APPEND : 0);
 			glob(cmd->arguments[i], flags  , NULL, &globbuf);
 		}
+		/* Ensuite on met le resultat dans la commande puis on recompte le nombre d'argument */
 		cmd->arguments=globbuf.gl_pathv;
 		int nb=0;
 		while(cmd->arguments[nb]!=NULL){
@@ -313,13 +359,19 @@ void cmd_exec(Cmd* cmd){
 		}
 		cmd->nbArgs=nb;
 
+
+
+		/* BACKQUOTE */
 		if(cmd->backquoted_index!=-1){
+			/* on execute puis recupere le resultat de la commande en backquote */
 			char** back = cmd_exec_backquoted(cmd->backquoted_cmd);
 			int nbBack=0;				
 			while(back[nbBack]!=NULL){
 				nbBack++;
 			}
 
+			/* ensuite on place le resultat au bon endroit dans le tableau d'argument
+			au meme endroit que la commande backquote*/
 			char** args = (char**)leash_malloc(sizeof(char*)*(cmd->nbArgs+nbBack));
 			int i=0;
 			int include=0;
@@ -343,16 +395,19 @@ void cmd_exec(Cmd* cmd){
 			}
 			args[i]=NULL;
 
+			/* Puis on met a jour les argument de la commande*/
 			cmd->arguments=args;
 			cmd->nbArgs=cmd->nbArgs+nbBack;
 				
 		}	
 
 		if(strcmp("pwd",cmd->nom) && strcmp("exit",cmd->nom) && strcmp("cd",cmd->nom) && strcmp("about",cmd->nom)){
-		
+			/* Si ce n'est pas une commande qui est implemente dans ce projet
+			alors on fait un exec*/
 			execvp(cmd->nom,cmd->arguments);
 			return;
 		}else{
+			/* sinon on appele la commande implemente par nos soins*/
 			if(strcmp("pwd",cmd->nom) == 0){
 				res=command_pwd();
 			}else if(strcmp("cd",cmd->nom) == 0){
@@ -368,11 +423,16 @@ void cmd_exec(Cmd* cmd){
 		}
 
 	}else{
+
+		/* PERE */
+		/* si le programme doit afficher du texte a l'ecran, alors on l'affiche*/
 		if(cmd->print){
 			char buff[9];
 			buff[8]='\0';
 			memset(buff,0,9);
 			int lu=0;
+			/* on lit le tube de sortie, on l'affiche
+			puis on le remet dans un tube qui sera lu pour verifier le resultat*/
 			while((lu=read(fd_out_Y[0],&buff,8))){
 				buff[lu]='\0';
 				printf("%s",buff);
@@ -383,7 +443,7 @@ void cmd_exec(Cmd* cmd){
 			leash_close(fd_out_Y[0]);
 		}
 
-
+		/* On attend le fils puis on verifie le resultat */
 		waitpid(pid,&(cmd->result),0);
 		leash_close(cmd->fd_in);
 		if(cmd->result==0 && strcmp("cd",cmd->nom)==0){
@@ -395,18 +455,6 @@ void cmd_exec(Cmd* cmd){
 	}
 
 	res=cmd->result;
-	/* SIGKILL */
-	/* A tester s'il s'agit d'un sigkill ou non */
-	if(res == 2){
-		/*res = 0;*/
-		/*printf("CTRL-D arrêt du processus en cours\n");*/
-	}else if(res== 9){
-		/*res = 0;*/
-		/*printf("CTRL-D arrêt du processus en cours\n");*/
-	}else if(res){
-		/*printf("res : %d\n",res );
-		perror("Error exec");*/
-	}
 }
 
 
