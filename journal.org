@@ -47,8 +47,9 @@
 ** TODO securiser les commandes (cd, ecriture, lecture, decompression,...)
 ** DONE globbing
 *** TODO tester a fond
-** TODO backquotes
-** TODO faire des niveaux
+** DONE backquotes
+** DONE faire des niveaux
 ** DONE autocompletion
-** TODO ncurses
+** DONE ncurses
 ** TODO notoyer le code 
+   
